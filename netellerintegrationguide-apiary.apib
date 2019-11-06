@@ -19,7 +19,7 @@ Here's a step-by-step guide to get you started:
 <a name="apikeys" title="Get your API Keys"></a>
 The Paysafe Payments API uses two distinct API keys:<br/>
 * The Secret Key – used for all server-to-server API requests.</li>
-* The Public Key – used as the value for the apiKey parameter when using the checkout SDK option.</li>
+* The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
 Merchant to retrieve their Secret and Public keys via their NETELLER Merchant Dashboard. Once you receive your API keys, they look something like this:
 * Key Username – MerchantXYZKey 
@@ -41,7 +41,7 @@ For example, using the Key Username and Password examples above, the header is f
 
 ```Authorization: Basic TWVyY2hhbnRYWVo6Qi10c3QxLTAtNTFlZDM5ZTQtMzEyZDAyMzQ1ZDNmMTIzMTIwODgxZGZmOWJiNDAyMGE4OWU4YWM0NGNkZmRjZWNkNzAyMTUxMTgyZmRjOTU yMjcyNjYxZDI5MGFiMmU1ODQ5ZTMxYmIwM2RlZWRlN2U=```
 
-For additional details, please refer to [here](http://en.wikipedia.org/wiki/Basic_access_authentication).
+For additional details, please refer [here](http://en.wikipedia.org/wiki/Basic_access_authentication).
 <a name="integrationmethods" title="Choosing Your Integration"></a>
 # Choosing Your Integration
 
@@ -59,7 +59,7 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 ###Direct Transfer to Merchant: Payin    
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Request Payment (merchant to merchant transfer) <br> <br>  </td>  <td>  <br>  POST /v1/transferIn<br> <br> <br>  </td>  </tr> </tbody>  </table>  |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody>  <tr>  <td><li>Create a Payment Handle</li><li>Get Payment Handle</li><li>Confirm Payment</li></td></td>  <td><li>POST /paymenthandles</li><li>GET /paymenthandles/{paymenthandleId}</li><li> POST /payments</li></td>  </tr>  </tbody>  </table>      |
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (merchant to merchant transfer)</td><td>POST /v1/transferIn<br><br><br></td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST /paymenthandles</li><li> POST /payments</li></td></tr></tbody></table>|
 
 ###Direct Transfer from Merchant: Payout   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
@@ -434,7 +434,7 @@ This is an example of a typical webhooks payload received when a Payments call a
     "paymentType": "NETELLER"
 }
 ```
-> **Note**: Unlike your NETELLER Webhook, you will not receive a secret key here as part of the payload. Rather, you need to consume the payload directly. 
+> **Note**: Unlike your NETELLER Webhook, you will not receive a Secret key here as part of the payload. Rather, you need to consume the payload directly. 
 
 ## Some Notes on Webhooks
 
@@ -633,101 +633,10 @@ each currency supports. You must change the formatting of the amount based on th
 specific currency. For example, Japanese Yen does not have minor units so the amount should be specified as 
 such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amount of 5000, and 50.000 TND would be 50000.
 
-
-
-<a name="provincecodes" title="Province Codes"></a>
-## Province Codes
-
-|Province               |Code   |
-|---                    |---    |
-|Alberta                |AB     |
-|British Columbia       |BC     |
-|Manitoba               |MB     |
-|New Brunswick          |NB     |
-|Newfoundland           |NL     |
-|Nova Scotia            |NS     |
-|Northwest Territories  |NT     |
-|Nunavut                |NU     |
-|Ontario                |ON     |
-|Prince Edward Island   |PE     |
-|Quebec                 |QC     |
-|Saskatchewan           |SK     |
-|Yukon                  |YT     |
-
-<a name="statecodes" title="State Codes"></a>
-## State Codes
-
-|State                  |Code   |
-|---                    |---    |
-|Alabama                |AL     |
-|Alaska                 |AK     |
-|American Samoa         |AS     |
-|Arizona                |AZ     |
-|Arkansas               |AR     |
-|Armed Forces Americas  |AA     |
-|Armed Forces Europe    |AE     |
-|Armed Forces Pacific   |AP     |
-|California             |CA     |
-|Colorado               |CO     |
-|Connecticut            |CT     |
-|Delaware               |DE     |
-|District of Columbia   |DC     |
-|Florida                |FL     |
-|Georgia                |GA     |
-|Guam                   |GU     |
-|Hawaii                 |HI     |
-|Idaho                  |ID     |
-|Illinois               |IL     |
-|Indiana                |IN     |
-|International          |IT     |
-|Iowa                   |IA     |
-|Kansas                 |KS     |
-|Kentucky               |KY     |
-|Louisiana              |LA     |
-|Maine                  |ME     |
-|Maryland               |MD     |
-|Massachusetts          |MA     |
-|Michigan               |MI     |
-|Minnesota              |MN     |
-|Mississippi            |MS     |
-|Missouri               |MO     |
-|Montana                |MT     |
-|Nebraska               |NE     |
-|Nevada                 |NV     |
-|New Hampshire          |NH     |
-|New Jersey             |NJ     |
-|New Mexico             |NM     |
-|New York               |NY     |
-|North Carolina         |NC     |
-|North Dakota           |ND     |
-|Northern Mariana Is.   |MP     |
-|Ohio                   |OH     |
-|Oklahoma               |OK     |
-|Oregon                 |OR     |
-|Palau                  |PW     |
-|Pennsylvania           |PA     |
-|Puerto Rico            |PR     |
-|Rhode Island           |RI     |
-|South Carolina         |SC     |
-|South Dakota           |SD     |
-|Tennessee              |TN     |
-|Texas                  |TX     |
-|U.S. Virgin Islands    |VI     |
-|United States Federal  |US     |
-|Utah                   |UT     |
-|Vermont                |VT     |
-|Virginia               |VA     |
-|Washington             |WA     |
-|West Virginia          |WV     |
-|Wisconsin              |WI     |
-|Wyoming                |WY     |
-
-
 <a name="countrycodes" title="Country Codes"></a>
 ## Country Codes
 | Country                       | Code |
 |---                                |---       |
-| Afghanistan                       | AF |
 | Åland Islands                     | AX |
 | Albania                           | AL |
 | Algeria                           | DZ |
