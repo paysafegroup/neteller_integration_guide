@@ -7,11 +7,11 @@ This guide provides you step-by-step instructions to integrate NETELLER via the 
 
 # Integrating to the Paysafe Payments API
 
-Here's a step-by-step guide to get you started:
+Here's a step-by-step guide:
 
-1. Get your API keys – see [API Keys](#apikeys) for information on how to retrieve your Secret and Public API keys.
-2. Choose your preferred type of integration – pick an [integration type](#integrationmethods) based on your PCI compliance level.
-3. Know the API endpoints – check out our API mapping table - [NETELLER REST API endpoints Vs the Paysafe Payments API endpoints](#apiendpoints).
+1. Get your [API Keys](#apikeys)
+2. Choose your preferred [integration type](#integrationmethods) based on your PCI compliance level
+3. Check out the API mapping table - [NETELLER REST API endpoints Vs the Paysafe Payments API endpoints](#apiendpoints)
 4. Understand and create a [payment handle](#paymenthandleoverview)
 5. [Use Webhooks](#Webhooks) 
 
@@ -21,7 +21,7 @@ The Paysafe Payments API uses two distinct API keys:<br/>
 * The Secret Key – used for all server-to-server API requests.</li>
 * The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
-You can retrieve your Secret and Public keys via their NETELLER Merchant Dashboard. Your API keys will look something like this:
+You can retrieve your Secret and Public keys via the [NETELLER Merchant Portal](https://merchant.neteller.com). Your API keys will look something like this:
 * Key Username – MerchantXYZKey 
 
 * Password – B-tst1-0-51ed39e4-312d02345d3f123120881dff9bb4020a89e8ac44cdfdcecd702151182fdc952272661d290ab2e5849e31bb03deede7e
@@ -32,11 +32,11 @@ To use HTTP Basic Authentication, you must send the API key credentials using th
 
 Construct the Authorization header as follows:
 
-1. Combine the Key Username and Key Password into a string separated by a colon, for example, "Key Username:Key Password”.
+1. Combine the Key Username and Key Password into a string separated by a colon, for example, “Key Username:Key Password”..
 
 2. The resulting string literal is then encoded using Base64.
 
-3. Put the authorization method and a space (i.e., "Basic") before the encoded string. 
+3. Put the authorization method and a space (i.e., “Basic”) before the encoded string. 
 For example, using the Key Username and Password examples above, the header is formed as follows:
 
 ```Authorization: Basic TWVyY2hhbnRYWVo6Qi10c3QxLTAtNTFlZDM5ZTQtMzEyZDAyMzQ1ZDNmMTIzMTIwODgxZGZmOWJiNDAyMGE4OWU4YWM0NGNkZmRjZWNkNzAyMTUxMTgyZmRjOTU yMjcyNjYxZDI5MGFiMmU1ODQ5ZTMxYmIwM2RlZWRlN2U=```
@@ -44,12 +44,11 @@ For example, using the Key Username and Password examples above, the header is f
 For additional details, please refer [here](http://en.wikipedia.org/wiki/Basic_access_authentication).
 <a name="integrationmethods" title="Choosing Your Integration"></a>
 # Choosing Your Integration
-
 The Paysafe Payments API supports two integration types: 
  1. Direct API Integration &ndash; Use this method if you are a merchant who is PCI-DSS SAQ-D compliant.
- This method allows you to collect customer payment information in your website while processing payments and other transactions using secure server-to-server requests sent to Paysafe. In the case of NETELLER payments, you need to redirect your customer to the NETELLERgo! hosted page for the customer to complete the transaction. 
+This method allows you to collect customer payment information on your website while processing transactions. In the case of NETELLER payments, you need to redirect your customer to the NETELLERgo! hosted page for the customer to complete the transaction.
  2. [The Paysafe Checkout](#paymentscheckout) &ndash; Use this method if you are a merchant in compliance with SAQ-A, the lowest level of PCI compliance. 
- This method allows you to take payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction by redirecting the customer to the NETELLERgo! hosted page.  
+This method allows you to take payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction by redirecting the customer to the NETELLERgo! hosted page.  
 
 # API Changes
 <a name="apiendpoints" title="NETELLER REST API Vs Paysafe Payments API"></a>
@@ -59,17 +58,17 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 ###Direct Transfer to Merchant: Payin    
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)<br><br><br></td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST /paymenthandles</li><li> POST /payments</li></td></tr></tbody></table>|
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)</td></tr></tbody></table> | <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li> POST [/payments](#paymentrequest)</li></td></tr></tbody></table>|
 
 ###Direct Transfer from Merchant: Payout   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Send Payment (merchant to customer transfer)<br>  <br> </td>  <td> <br>  POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment) <br>  </td> </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody><tr>  <td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td>  <td><li>POST /paymenthandles</li><li>POST /standalonecredits</li></td>  </tr>  </tbody>  </table>      |
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><br>Send Payment (merchant to customer transfer)</td><td>POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li>POST [/standalonecredits](#standalonecreditrequest)</li></td></tr></tbody></table>|
 
 ###Lookup   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td><br>Payment - Lookup Payment(s)</td>  <td><br>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td>  </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody>  <tr>  <td><li>Get Payments</li><li>Get settlement</li></td>  <td><li>GET /payments</li><li>GET /settlements</li></td>  </tr>  </tbody>  </table>      |
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Payment - Lookup Payment(s)</td><td>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Get Payments</li><li>Get settlement</li></td><td><li>GET [/payments](#getpayment)</li><li>GET [/standalonecredits](#getstandalonecredit)</li></td></tr></tbody></table>|
 
 
 <a name="paymentscheckout" title="Payments Checkout"></a>
@@ -79,7 +78,7 @@ The Paysafe Checkout is an SDK that allows you to
 - Take payment via NETELLER
 
 The Paysafe Checkout uses a secure overlay that requires the least demanding level of PCI compliance - SAQ-A. 
-Paysafe handles the entry and storage of payment information, and the checkout uses the Paysafe Payments API for payment and credit processing.
+The Paysafe Checkout handles the entry and storage information of the transaction for payment and credit processing.
 
 <!--When you want to process a checkout request, you would do the following:
 
