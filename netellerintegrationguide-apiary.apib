@@ -11,8 +11,8 @@ Here's a step-by-step guide to get you started:
 
 1. Get your API keys – see [API Keys](#apikeys) for information on how to retrieve your Secret and Public API keys.
 2. Choose your preferred type of integration – pick an [integration type](#integrationmethods) based on your PCI compliance level.
-3. Know the API endpoints – check out our API mapping table - [NETELLER REST API enpoints Vs the Paysafe Payments API endpoints](#apiendpoints).
-4. [Understand and create a payment handle](#paymenthandleoverview)
+3. Know the API endpoints – check out our API mapping table - [NETELLER REST API endpoints Vs the Paysafe Payments API endpoints](#apiendpoints).
+4. Understand and create a [payment handle](#paymenthandleoverview)
 5. [Use Webhooks](#Webhooks) 
 
 # API Keys
@@ -21,12 +21,12 @@ The Paysafe Payments API uses two distinct API keys:<br/>
 * The Secret Key – used for all server-to-server API requests.</li>
 * The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
-Merchant to retrieve their Secret and Public keys via their NETELLER Merchant Dashboard. Once you receive your API keys, they look something like this:
+You can retrieve your Secret and Public keys via their NETELLER Merchant Dashboard. Your API keys will look something like this:
 * Key Username – MerchantXYZKey 
 
 * Password – B-tst1-0-51ed39e4-312d02345d3f123120881dff9bb4020a89e8ac44cdfdcecd702151182fdc952272661d290ab2e5849e31bb03deede7e
 
-> **Note:** This is not the same as your [Merchant portal](https://merchant.neteller.com) username and password. The case-sensitive API key is sent using HTTP Basic Authentication. 
+> **Note:** This is not the same as your login credentials to the [NETELLER Merchant Portal](https://merchant.neteller.com). The case-sensitive API key is sent using HTTP Basic Authentication. 
 
 To use HTTP Basic Authentication, you must send the API key credentials using the Authorization header with every request.
 
@@ -49,27 +49,27 @@ The Paysafe Payments API supports two integration types:
  1. Direct API Integration &ndash; Use this method if you are a merchant who is PCI-DSS SAQ-D compliant.
  This method allows you to collect customer payment information in your website while processing payments and other transactions using secure server-to-server requests sent to Paysafe. In the case of NETELLER payments, you need to redirect your customer to the NETELLERgo! hosted page for the customer to complete the transaction. 
  2. [The Paysafe Checkout](#paymentscheckout) &ndash; Use this method if you are a merchant in compliance with SAQ-A, the lowest level of PCI compliance. 
- This method allows you to take payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, Checkout handles the transaction by redirecting the customer to the NETELLERgo! hosted page.  
+ This method allows you to take payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction by redirecting the customer to the NETELLERgo! hosted page.  
 
 # API Changes
 <a name="apiendpoints" title="NETELLER REST API Vs Paysafe Payments API"></a>
 ##NETELLER REST API Vs Paysafe Payments API
-Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments API endpoints. All of the NETELLER endpoints are listed in the left column, and the equivalent Paysafe Payments endpoints are in the right column.
+Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments API endpoints. All of the NETELLER REST API endpoints are listed in the left column, and the equivalent Paysafe Payments API endpoints are in the right column.
 
 ###Direct Transfer to Merchant: Payin    
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (merchant to merchant transfer)</td><td>POST /v1/transferIn<br><br><br></td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST /paymenthandles</li><li> POST /payments</li></td></tr></tbody></table>|
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)<br><br><br></td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST /paymenthandles</li><li> POST /payments</li></td></tr></tbody></table>|
 
 ###Direct Transfer from Merchant: Payout   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Send Payment (merchant to member transfer)<br>  <br> </td>  <td> <br>  POST /v1/transferOut <br>  </td> </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody><tr>  <td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td>  <td><li>POST /paymenthandles</li><li>POST /standalonecredits</li></td>  </tr>  </tbody>  </table>      |
+<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Send Payment (merchant to member transfer)<br>  <br> </td>  <td> <br>  POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment) <br>  </td> </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody><tr>  <td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td>  <td><li>POST /paymenthandles</li><li>POST /standalonecredits</li></td>  </tr>  </tbody>  </table>      |
 
 ###Lookup   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td><br>Payment - Lookup Payment(s)</td>  <td><br>GET /v1/payments/{ID}</td>  </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody>  <tr>  <td><li>Get Payments</li><li>Get settlement</li></td>  <td><li>GET /payments</li><li>GET /settlements</li></td>  </tr>  </tbody>  </table>      |
+<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td><br>Payment - Lookup Payment(s)</td>  <td><br>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td>  </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody>  <tr>  <td><li>Get Payments</li><li>Get settlement</li></td>  <td><li>GET /payments</li><li>GET /settlements</li></td>  </tr>  </tbody>  </table>      |
 
 
 <a name="paymentscheckout" title="Payments Checkout"></a>
@@ -228,7 +228,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |[customer](#customer)|object|no||You can choose to pass an existing customer profile in the call to create a payment handle for first-time customers having no customer profile.|
 |displayPaymentMethods|Array |no |Possible value is NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
 |[paymentMethodDetails](#paymentmethoddetails)|object|conditional||Required for NETELLER payment type.|
-|payout |boolean |no | | If true, launches the **Withdrawal** Checkout screen. If false, launches the **Payment** Checkout.<br/> Defaults to false. |
+|payout |boolean |no | | If true, launches the **Withdrawal** Checkout screen. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
 |[payoutConfig](#payoutconfig) |object | conditional | | Required for Withdrawal checkout only. This configuration is used to specify withdrawal limitations. |
 
 <a name="billingaddress"></a>
@@ -595,7 +595,7 @@ Paysafe returns first 10 records by default in instances where an API GET reques
 
 **Note**
  * The table below lists currencies in which transaction requests are processed. However, note that they may be settled in a different currency.
- * Contact the NETELLER Merchant Support team <merchantsupport@paysafe.com> for more information on currencies supported for your merchant account.
+ * Contact the NETELLER Merchant Support team <merchantsupport@paysafe.com> for more information on currencies supported for your account.
 
 |Currency Code|Description            |Decimal Places|
 |---          |---                    |---|
@@ -952,7 +952,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |---                |---                                |---            |
 |id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
 |status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
-|merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer belonging to a merchant.|
+|merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
 |locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>en_US</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating payment handle, the NETELLERgo! checkout will be in the local language provided
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
