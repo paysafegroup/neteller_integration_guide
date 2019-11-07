@@ -80,25 +80,23 @@ The Paysafe Checkout is an SDK that allows you to
 The Paysafe Checkout uses a secure overlay that requires the least demanding level of PCI compliance - SAQ-A. 
 The Paysafe Checkout handles the entry and storage information of the transaction for payment and credit processing.
 
-<!--When you want to process a checkout request, you would do the following:
+When you want to process a checkout request, you do the following:
 
-1. Create a Payment Handle with the transactionType parameter set to PAYMENT and the paymentType parameter set to SKRILL.
+1. Create a Payment Handle with the transactionType parameter set to PAYMENT and the paymentType parameter set to NETELLER.
 
-2. Since the customer has to complete payment authentication by providing Skrill details, Paysafe returns a response with the following:
+2. Since the customer has to complete payment authentication by providing NETELLER details, Paysafe returns a response with the following:
 
-The action parameter is set to REDIRECT
+* The action parameter is set to *REDIRECT*
 
-A payment_redirect link points to the Skrill redirect URL
+* A payment_redirect link points to the NETELLERgo! redirect URL
 
-3. Redirect the customer to the Skrill redirect URL so they can provide the email address and password details to complete the money transfer.
+3. Redirect the customer to the NETELLER redirect URL so they can provide the email address and password details to complete the money transfer.
 
-4. Upon successful customer authentication, the merchant gets notified at the URL specified in the on_completed parameter included with their request.
+4. At this point, the status of the Payment Handle becomes PAYABLE.
 
-5. At this point, the status of the Payment Handle becomes PAYABLE.
+5. Upon successful customer authentication, the customer will be navigated to the merchant website.
 
 6. Use the paymentHandleToken returned in the response to process the Payment request.
-
-7. Once the Payment request is successfully completed, the funds are immediately transferred to the merchant's account.-->
 
 ## How to use SDK
 
