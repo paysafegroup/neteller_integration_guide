@@ -64,7 +64,7 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 ###Direct Transfer from Merchant: Payout   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Send Payment (merchant to member transfer)<br>  <br> </td>  <td> <br>  POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment) <br>  </td> </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody><tr>  <td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td>  <td><li>POST /paymenthandles</li><li>POST /standalonecredits</li></td>  </tr>  </tbody>  </table>      |
+<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr> <tbody>  <tr>  <td> <br> Send Payment (merchant to customer transfer)<br>  <br> </td>  <td> <br>  POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment) <br>  </td> </tr>  </tbody>  </table> |<table>  <tr> <th>Name</th>  <th>Endpoint</th>  </tr>  <tbody><tr>  <td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td>  <td><li>POST /paymenthandles</li><li>POST /standalonecredits</li></td>  </tr>  </tbody>  </table>      |
 
 ###Lookup   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
@@ -220,16 +220,16 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |currency|string|yes|`length=3`<br/>`Regex:[A-Z]`|The [currency of the merchant account](#currencycodes). For example, USD or CAD.|
 |merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from Checkout. |
 |amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer would have to enter the desired amount in the Checkout.|
-|environment|string|no|Possible values: LIVE or TEST|The environment used for making the API calls and loading the Checkout. The default value is LIVE, if not specified.|
-|locale|string|no|Possible values: en_US|Local language for the checkout.|
+|environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Checkout. The default value is LIVE, if not specified.|
+|locale|string|no|Possible values is: en_US|Local language for the checkout.|
 |[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** Note: If both the addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays address information from the billingAddress object.|
 |singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). Displays any saved addresses and/or payment details in the Checkout.|
 |canEditAmount|boolean|no||If *true*, the customer can edit the amount in Checkout before clicking Pay. The amount is not editable if the value is *false*.|
 |[customer](#customer)|object|no||You can choose to pass an existing customer profile in the call to create a payment handle for first-time customers having no customer profile.|
-|displayPaymentMethods|Array |no |Possible value is NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
+|displayPaymentMethods|Array |no |Possible value is: NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
 |[paymentMethodDetails](#paymentmethoddetails)|object|conditional||Required for NETELLER payment type.|
 |payout |boolean |no | | If true, launches the **Withdrawal** Checkout screen. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
-|[payoutConfig](#payoutconfig) |object | conditional | | Required for Withdrawal checkout only. This configuration is used to specify withdrawal limitations. |
+|[payoutConfig](#payoutconfig) |object | conditional | | Required for the Withdrawal Checkout only. This configuration is used to specify withdrawal limitations. |
 
 <a name="billingaddress"></a>
 **billingAddress**
@@ -241,7 +241,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |city|string|yes|`length<=40`|The city name in the address.|
 |zip|string|yes|`length<=10`|The zip code of the address.|
 |country|string|yes|`length=2`|The country of the address. For example, GB. See [Country Codes](#countrycodes).|
-|state|string|yes|`length<=40`|The state of the address. See [State Codes](#statecodes).|
+|state|string|yes|`length<=40`|The state of the address.|
 
 
 <a name="customer"></a>
@@ -318,7 +318,7 @@ The *resultCallback* contains the following elements.
 |---------|-------|---------------|-----------|
 |message|string|yes|Displays an error message to the customers.|
 |detailedMessage|string|yes|Provides a detailed error message that is logged.|
-|correlationId|string|yes|A Unique ID that you can provide to the NETELLER Merchant Support team <merchantsupport@paysafe.com> as a reference for investigation.|
+|correlationId|string|yes|A Unique ID that you can provide to the NETELLER Merchant Support team at <merchantsupport@paysafe.com> as a reference for investigation.|
 
 <a name="result"></a>
 **result**
@@ -494,18 +494,6 @@ This is an example of a typical webhooks payload received when a Payments call a
 |400|5303|Payment instrument already exists.|
 |403|5309|The maximum amount of money allowed for the requested operation is exceeded.|
 
-## Settlement Errors
-|HTTP Status Code|Error Code|Description|
-|---------|---------|---------------|
-|400|3200|You have submitted an invalidly formatted Authorization ID for this Settlement.|
-|404|3201|The Authorization ID included in this Settlement request could not be found.|
-|402|3202|You have exceeded the maximum number of Settlements allowed.|
-|402|3203|The Authorization is either fully settled or cancelled.|
-|402|3204|The requested Settlement amount exceeds the remaining Authorization amount.|
-|402|3205|The Authorization you are attempting to settle has expired.|
-|402|3206|The external processing gateway has rejected the transaction.|
-|402|3207|Due to issuer policies, this type of transaction is not allowed.|
-
 ## Alternate Payments Errors
 |HTTP Status   |Error Code                    |Message                                 |Details|
 |---           |---                           |---                                     |---|
@@ -595,7 +583,7 @@ Paysafe returns first 10 records by default in instances where an API GET reques
 
 **Note**
  * The table below lists currencies in which transaction requests are processed. However, note that they may be settled in a different currency.
- * Contact the NETELLER Merchant Support team <merchantsupport@paysafe.com> for more information on currencies supported for your account.
+ * Contact the NETELLER Merchant Support team at <merchantsupport@paysafe.com> for more information on currencies supported for your account.
 
 |Currency Code|Description            |Decimal Places|
 |---          |---                    |---|
@@ -927,7 +915,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |street             |string<br/>`length<=50`    |This is the first line of the customer's street address.|
 |street2            |string<br/>`length<=50`    |This is the second line of the customer's street address, if required (for example, apartment number).|
 |city               |string<br/>`length<=40`    |This is the city where the address is located.|
-|state              |string<br/>`length<=40`    |This is the state/province/region in which the customer lives.<br/>For Canada see [Province Codes](#provincecodes). For the United States see [State Codes](#statecodes). Other countries have no restrictions.|
+|state              |string<br/>`length<=40`    |This is the state/province/region in which the customer lives. Other countries have no restrictions.|
 |zip                |string<br/>`length<=10`    |This is the zip, postal, or post code of the customer's address.|
 |country            |string<br/>`length=2`      |This is the country where the address is located. See [Country Codes](#countrycodes).|
 
@@ -935,12 +923,12 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 {
     "billingDetails": {
         "nickName": "home",
-        "street": "100 Queen Street West",
-        "street2": "Unit 201",
-        "city": "Toronto",
-        "state": "ON",
-        "zip": "M5H 2N2",
-        "country": "CA"
+        "street": "George Street",
+        "street2": "3 Edgar Buildings",
+        "city": "Bath",
+        "state": "BA",
+        "zip": "BA1 2FJ",
+        "country": "GB"
     }
 }
 ```
@@ -1284,11 +1272,11 @@ Click on **Create a Payment Handle** above to see how to create a payment handle
                 "customerIp": "172.0.0.1",
                 "billingDetails": {
                     "nickName": "Home",
-                    "street": "100 Queen",
-                    "street2": "Unit 201",
-                    "city": "Toronto",
-                    "zip": "M5H 2N2",
-                    "country": "CA"
+                    "street": "George Street",
+                    "street2": "3 Edgar Buildings",
+                    "city": "Bath",
+                    "zip": "BA1 2FJ",
+                    "country": "GB"
                 },
                 "link": [{
                         "rel": "on_completed",
@@ -1327,10 +1315,12 @@ Click on **Create a Payment Handle** above to see how to create a payment handle
                 "executionMode": "SYNCHRONOUS",
                 "amount": 500,
                 "billingDetails": {
-                    "street2": "Unit 201",
-                    "zip": "M5H 2N2",
-                    "city": "Toronto",
-                    "country": "CA"
+                   "nickName": "Home",
+                    "street": "George Street",
+                    "street2": "3 Edgar Buildings",
+                    "city": "Bath",
+                    "zip": "BA1 2FJ",
+                    "country": "GB"
                 },
                 "customerIp": "172.0.0.1",
                 "timeToLiveSeconds": 899,
@@ -1403,11 +1393,12 @@ Click on **Get Payment Handle** above to see how to look up a payment handle usi
               "customerIp": "172.0.0.1",
               "paymentHandleToken": "SC0YsGIIgFksiOsQ",
               "billingDetails": {
-                "street": "100 Queen",
-                "street2": "Unit 201",
-                "city": "Toronto",
-                "country": "CA",
-                "zip": "M5H 2N2"
+                "nickName": "Home",
+                "street": "George Street",
+                "street2": "3 Edgar Buildings",
+                "city": "Bath",
+                "zip": "BA1 2FJ",
+                "country": "GB"
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
@@ -1468,11 +1459,12 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               "customerIp": "172.0.0.1",
               "paymentHandleToken": "SC0YsGIIgFksiOsQ",
               "billingDetails": {
-                "street": "100 Queen",
-                "street2": "Unit 201",
-                "city": "Toronto",
-                "country": "CA",
-                "zip": "M5H 2N2"
+                "nickName": "Home",
+                 "street": "George Street",
+                 "street2": "3 Edgar Buildings",
+                 "city": "Bath",
+                 "zip": "BA1 2FJ",
+                 "country": "GB"
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
@@ -1811,17 +1803,17 @@ Click on **Get Standalone Credit Using Merchant Reference Number** above to see 
                 _Read Only, length<=36_
             + nickName:`Home` (string) - This is an alias defined by the customer for this address (for example, "home address").
                 _length<=50_
-            + street:`100 Queen` (string, required) - This is the first line of the customer's street address. **Note:** This is required only when the address is to be used in association with a bank account.
+            + street:`George Street` (string, required) - This is the first line of the customer's street address. **Note:** This is required only when the address is to be used in association with a bank account.
                 _length<=50_
-            + street2:`Unit 201` (string) - This is the second line of the customer's street address, if required.
+            + street2:`3 Edgar Buildings` (string) - This is the second line of the customer's street address, if required.
                 _length<=50_
-            + city:`Toronto` (string, required) - This is the city where the address is located. **Note:** This is required only when the address is to be used in association with a bank account.
+            + city:`Bath` (string, required) - This is the city where the address is located. **Note:** This is required only when the address is to be used in association with a bank account.
                 _length<=40_
-            + zip:`M5H 2N2` (string, required) - This is the zip, postal, or post code of the customer's address.
+            + zip:`BA1 2FJ` (string, required) - This is the zip, postal, or post code of the customer's address.
                 _length<=10_
-            + country:`CA` (string, required) - This is the country where the address is located. See [Country Codes](#countrycodes).
+            + country:`GB` (string, required) - This is the country where the address is located. See [Country Codes](#countrycodes).
                 _length=2_
-            + state:`ON` (string) - This is the state/province/region in which the customer lives.
+            + state:`BA` (string) - This is the state/province/region in which the customer lives.
                 _length<=40_
             + phone:`647-788-3901` (string) - This is the customer's phone number.
                 _length<=40_
@@ -1830,17 +1822,17 @@ Click on **Get Standalone Credit Using Merchant Reference Number** above to see 
 
 ## Billing Details
 + billingDetails (object) - These are the customer's billing details. **Note:** For single-use payment handles, this address information will be ignored if the *paymentHandleTokenFrom* parameter is included in the payment handle creation request and there is already address information associated with that customer.
-    + street:`100 Queen` (string)  - This is the first line of the street address in the billing address.
+    + street:`George Street` (string)  - This is the first line of the street address in the billing address.
         _length<=50_
-    + street2:`Unit 201` (string) - This is the second line of the street address in the billing address, if required (for example, apartment number).
+    + street2:`3 Edgar Buildings` (string) - This is the second line of the street address in the billing address, if required (for example, apartment number).
         _length<=50_
-    + city:`Toronto` (string) - This is the city in the billing address.
+    + city:`Bath` (string) - This is the city in the billing address.
         _length<=40_
-    + zip:`MSH 2N2` (string) - This is the postal/zip code in the billing address.
+    + zip:`BA1 2FJ` (string) - This is the postal/zip code in the billing address.
         _length<=10_
-    + country:`CA` (string) - This is the country where the address is located. See [Country Codes](#countrycodes).
+    + country:`GB` (string) - This is the country where the address is located. See [Country Codes](#countrycodes).
         _length=2_
-    + state:`ON` (string) - This is the state or province of the billing address. For Canada see [Province Codes](#provincecodes). For the United States see [State Codes](#statecodes). Other countries have no restrictions.
+    + state:`BA` (string) - This is the state or province of the billing address. Other countries have no restrictions.
         _length<=40_
     + phone:`444-9999` (string) - This is the customer's telephone number.
         _length<=40_
