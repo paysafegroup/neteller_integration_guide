@@ -96,27 +96,6 @@ The Paysafe Checkout is an SDK that allows you to
 The Paysafe Checkout uses a secure overlay that requires the least demanding level of PCI compliance - SAQ-A. 
 The Paysafe Checkout handles the entry and storage information of the transaction for payment and credit processing.
 
-When you want to process a checkout request, you do the following:
-<ol>
-
-include the 
-<li>Create a Payment Handle with the transactionType parameter set to PAYMENT and the paymentType parameter set to NETELLER.</li>
-
-<li>Since the customer has to complete payment authentication by providing NETELLER details, Paysafe returns a response with the following:
-
-* The action parameter is set to *REDIRECT*
-* A payment_redirect link points to the NETELLERgo! redirect URL
-
-<li>Redirect the customer to the NETELLER redirect URL so they can provide the email address and password details to complete the money transfer.</li>
-
-<li>At this point, the status of the Payment Handle becomes PAYABLE.</li>
-
-<li>Upon successful customer authentication, the customer will be navigated to the merchant website.</li>
-
-<li>Use the paymentHandleToken returned in the response to process the Payment request.</li>
-
-</ol>
-
 ## How to use SDK
 
 1. You must include the Paysafe Checkout SDK in your HTML payment form.
@@ -136,7 +115,7 @@ You need to include it in your HTML form by adding a `<script>` element in eithe
 
 ## Example Payment Form
 
-The following code sample shows a minimal Paysafe Checkout example for NETELLER payments. The example illustrates creating a payment overlay for the customer. 
+The following code sample shows a minimal Paysafe Checkout example for NETELLER payments. The example shows how to create a payment overlay. 
 The overlay creates a payment handle for the data entered by the customer and displays the payment handle token (if successful) in the browser console.
 
 ```html
@@ -240,12 +219,12 @@ The overlay creates a payment handle for the data entered by the customer and di
                 },
                 "billingAddress": {
                     "nickName": "John Dee",
-                    "street": "20735 Stevens Creek Blvd",
-                    "street2": "Montessori",
-                    "city": "Cupertino",
-                    "zip": "95014",
-                    "country": "US",
-                    "state": "CA"
+                    "street": "George Street",
+                    "street2": "3 Edgar Buildings",
+                    "city": "Bath",
+                    "zip": "BA10BD8",
+                    "country": "GBP",
+                    "state": "JI"
                 },
                 "environment": "TEST",
                 "merchantRefNum": "1559900597607",
