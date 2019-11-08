@@ -559,6 +559,55 @@ Paysafe returns first 10 records by default in instances where an API GET reques
 | startDate     | This is the start date in UTC. Default = 30 days before the *endDate*.|
 | endDate       | This is the end date in UTC. Default = current date and time. |
 
+Sample Response with List Data
+
+```html
+{
+    "meta": {
+        "numberOfRecords": 1,
+        "limit": 10,
+        "page": 1
+    },
+  "paymentHandles":[{
+  "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
+  "amount": 1900,
+  "merchantRefNum": "merchantRefNum-115",
+  "action": "NONE",
+  "currencyCode": "GBP",
+  "usage": "SINGLE_USE",
+  "status": "EXPIRED",
+  "timeToLiveSeconds": 0,
+  "transactionType": "PAYMENT",
+  "paymentType": "NETELLER",
+  "executionMode": "SYNCHRONOUS",
+  "customerIp": "172.0.0.1",
+  "paymentHandleToken": "SC0YsGIIgFksiOsQ",
+  "billingDetails": {
+    "nickName": "Home",
+     "street": "George Street",
+     "street2": "3 Edgar Buildings",
+     "city": "Bath",
+     "zip": "BA1 2FJ",
+     "country": "GB"
+  },
+    "neteller": {
+    "consumerId": "johndoe@email.com",
+    "detail1Description":"Details 1 description",
+    "detail1Text":"Details 1 text"  
+    },
+  "link": [{
+            "rel": "on_completed",
+            "href": "https://US_commerce_site/payment/return/success",
+            "method": "GET"
+        },
+        {
+            "rel": "on_failed",
+            "href": "https://US_commerce_site/payment/return/failed",
+            "method": "GET"
+        }
+    ]}
+}
+```
 <a name="isostandards" title="ISO Standards"></a>
 # ISO Standards
 <a name="Localecodes" title="Locale Codes"></a>
