@@ -41,7 +41,7 @@ The Paysafe Payments API supports two integration types:
 <a name="apiendpoints" title="NETELLER REST API Vs Paysafe Payments API"></a>
 ##NETELLER REST API Vs Paysafe Payments API
 Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments API endpoints. All of the NETELLER REST API endpoints are listed in the left column, and the equivalent Paysafe Payments API endpoints are in the right column.
-###Direct Transfer to Merchant: Payin    
+###Direct Transfer to Merchant: Payment    
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
 <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)</td></tr></tbody></table> | <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li> POST [/payments](#paymentrequest)</li></td></tr></tbody></table>|
