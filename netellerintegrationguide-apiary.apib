@@ -45,14 +45,14 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
 <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)</td></tr></tbody></table> | <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li> POST [/payments](#paymentrequest)</li></td></tr></tbody></table>|
-###Direct Transfer from Merchant: Payout   
+###Direct Transfer from Merchant: Standalone Credit   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
 <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><br>Send Payment (merchant to customer transfer)</td><td>POST [/v1/transferOut](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/send-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Process Standalone Credit</li></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li>POST [/standalonecredits](#standalonecreditrequest)</li></td></tr></tbody></table>|
 ###Lookup   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Payment - Lookup Payment(s)</td><td>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Get Payments</li><li>Get Standalone Credits</li></td><td><li>GET [/payments](#getpayment)</li><li>GET [/standalonecredits](#getstandalonecredit)</li></td></tr></tbody></table>|
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Payment - Lookup Payment(s)</td><td>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Get Payment</li><li>Get Standalone Credit</li></td><td><li>GET [/payments](#getpayment)</li><li>GET [/standalonecredits](#getstandalonecredit)</li></td></tr></tbody></table>|
 <a name="apiIntegration" title="Direct API Integration"></a>
 ## Direct API Integration
 The Paysafe Payments API allows you to process payment-related requests using the REST protocol. The protocol uses JSON for all requests and responses.
@@ -320,13 +320,13 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |---------|-------|---------------|-----------|------------------|
 |maximumAmount|number|yes|`length=1-9`|It specifies the maximum amount a customer is allowed to withdraw from the Checkout in the current session.|
 
->**Note:** The Paysafe Checkout option is not applicable for Payout.
+>**Note:** The Paysafe Checkout option is not applicable for Standalone Credit request.
 
 <a name="neteller"></a>
 **neteller**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. You must provide this while making a payout. |
+|consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. You must provide this while making a Standalone Credit request. |
 |recipientDescription   |string|no|`length<=30` |The description displayed on the NETELLER payment page.|
 |detail1Description     |string|no|             |Displays additional details of the product.|
 |detail1Text            |string|no|             |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
@@ -396,7 +396,7 @@ A few additional parameters are important during the creation of a payment handl
 ### Action
 The *action* parameter is a read-only value that Paysafe returns in response to the Payment Handle creation request.
 The possible values are: 
-* NONE – Customer requires no further action.
+* NONE – Customer is not required to perform further action.
 * REDIRECT –  The customer is required to authorize the payment on a redirected page. In this case, you must redirect the customer to a link that Paysafe returns in response to the Payment Handle creation request. Once the customer completes the authentication successfully, the *status* of the Payment Handle token is **PAYABLE**.
 
 ### Usage
@@ -409,7 +409,7 @@ The *executionMode* parameter is a read-only value. Paysafe returns this in resp
 The possible value is:
 * ASYNCHRONOUS – Completes the Payment after a significant time delay.
 
-# How to process a NETELLER payment
+# How to process a NETELLER Payment
 To process a NETELLER payment, you have to make the following API calls:
 * Create payment handle 
 * Get payment handle 
@@ -417,12 +417,12 @@ To process a NETELLER payment, you have to make the following API calls:
 
 ![Payment- Transfer In](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/payments.png)
 
-# How to process a NETELLER payout
-To process a NETELLER payment, you have to make the following API calls:
+# How to process a NETELLER Standalone Credit
+To process a NETELLER Standalone credit, you have to make the following API calls:
 * Create payment handle 
 * Process standalone credit
 
-![Payout- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
+![Standalone Credit- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
 > **Note:** All of your webhook settings are intact. However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
@@ -1042,7 +1042,7 @@ This is a read-only raw response returned by an acquirer.
 
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
-|consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a payout. |
+|consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credit request. |
 |recipientDescription   |string<br/>`length<=30`    |The description to be shown on the NETELLER payment page.|
 |detail1Description     |string                     |You can show additional details about the product. |
 |detail1Text            |string                     |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
@@ -1654,7 +1654,7 @@ Click on **Get Payment Using Merchant Reference Number** above to see how to loo
 
 ## Standalone Credit [/v1/standalonecredits]
 
-A payout request allows you to issue credits without requiring a previous *settlement_id*.
+A Standalone Credit request allows you to issue credits without requiring a previous *settlement_id*.
 
 ### Process Standalone Credit [POST]
 <a name="standalonecreditrequest" title="Process Standalone Credit"></a>
