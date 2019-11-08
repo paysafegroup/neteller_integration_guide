@@ -10,7 +10,7 @@ This guide provides you step-by-step instructions to integrate NETELLER via the 
 Here's a step-by-step guide:
 
 1. Get your [API Keys](#apikeys)
-2. Choose your preferred [integration type](#integrationmethods) based on your PCI compliance level
+2. Choose your preferred [integration type](#integrationmethods)
 3. Check out the API mapping table - [NETELLER REST API endpoints Vs the Paysafe Payments API endpoints](#apiendpoints)
 4. Understand and create a [payment handle](#paymenthandleoverview)
 5. [Use Webhooks](#Webhooks) 
@@ -45,10 +45,8 @@ For additional details, please refer [here](http://en.wikipedia.org/wiki/Basic_a
 <a name="integrationmethods" title="Choosing Your Integration"></a>
 # Choosing Your Integration
 The Paysafe Payments API supports two integration types: 
- 1. [Direct API Integration](#apiIntegration) &ndash; Use this method if you are a merchant who is PCI-DSS SAQ-D compliant.
-This method allows you to collect customer payment information on your website while processing transactions. In the case of NETELLER payments, you need to redirect your customer to the hosted checkout to complete the transaction.
- 2. [The Paysafe Checkout](#paymentscheckout) &ndash; Use this method if you are a merchant in compliance with SAQ-A, the lowest level of PCI compliance. 
-This method allows you to take payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction.
+ 1. [Direct API Integration](#apiIntegration) &ndash; This method allows you to collect customer payment information on your website while processing transactions. In the case of NETELLER payments, you need to redirect your customer to the hosted Checkout to complete the transaction.
+ 2. [The Paysafe Checkout](#paymentscheckout) &ndash; This method allows you to take Payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction.
 
 # API Changes
 <a name="apiendpoints" title="NETELLER REST API Vs Paysafe Payments API"></a>
@@ -82,7 +80,7 @@ The API endpoint (URI or URL) points to either the Test or Production (live) env
 ### Making API Calls
 Before you make your first API call, you must have the following information:
 * **API endpoint**: This is the URL to which you send your request, and its format depends on the type of API call.
-* **API key**: Paysafe provides you with the credentials in the Neteller Merchant Dashboard. You must include the API key in the Authorization HTTPS header.
+* **API key**: Paysafe provides you with the credentials in the NETELLER Merchant Portal. You must include the API key in the Authorization HTTPS header.
 * **Message body**: This must contain valid Paysafe JSON objects as required for the type of request. Not all API calls require a message-body; for example, GET requests do not require a body.
 * **Resource ID**: Identifies the unique ID of a resource.
 ![Structure of a Typical Payments API Request](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/authentication_example_payments.png)
@@ -93,13 +91,12 @@ Before you make your first API call, you must have the following information:
 The Paysafe Checkout is an SDK that allows you to 
 - Take payment via NETELLER
 
-The Paysafe Checkout uses a secure overlay that requires the least demanding level of PCI compliance - SAQ-A. 
-The Paysafe Checkout handles the entry and storage information of the transaction for payment and credit processing.
+The Paysafe Checkout uses a secure overlay and handles the entry and storage information of the transaction for payment and standalone credit processing.
 
 ## How to use SDK
 
 1. You must include the Paysafe Checkout SDK in your HTML payment form.
-2. You must call the checkout setup function using your Public API key. The setup function creates an iframe overlay that shows the processing loader and further redirects the customer to a new tab to complete the authentication. 
+2. You must call the Checkout setup function using your Public API key. The setup function creates an iframe overlay that shows the processing loader and further redirects the customer to a new tab to complete the authentication. 
 You need to pass a callback function as part of the setup to process a payment handle success and failure.
 3. The callback should use AJAX to send the payment handle representing the customer's payment details to your (merchant) server to [make a payment](#paymentrequest) using the Paysafe Payments API.
 
@@ -188,7 +185,7 @@ The overlay creates a payment handle for the data entered by the customer and di
 ```
 
 ##Example Withdrawal Form
-
+The following code sample shows a minimal Paysafe Withdrawal Checkout example that creates a payment overlay. The overlay creates a payment handle for the data entered by the user and displays the payment handle token (if successful) in the browser console.
 ```html
 <html>
     <head>
@@ -275,9 +272,9 @@ The overlay creates a payment handle for the data entered by the customer and di
 ## Setup Function
 
 The setup function creates and initializes the Paysafe Checkout in an overlay. It has the following parameters:
-+ The [Public API key](#publicapikey). You can use this key only to generate payment handle tokens for use with payments or credits. Consequently, you can expose this key public in the customer's browser.
++ The [Public API key](#publicapikey). You can use this key only to generate payment handle tokens for use with payments or standalone credits. Consequently, you can expose this key public in the customer's browser.
 + An *options* object contains the environment to use (Test or Live), the payment amount, currency, and several parameters to show additional features in the payment form. 
-+ A *resultCallback* function you provide to receive the Paysafe checkout instance, process successful payment handle (by sending the payment handle to your (merchant) server) or respond to any errors caused by a failed payment handle creation.
++ A *resultCallback* function you provide to receive the Paysafe Checkout instance, process successful payment handle (by sending the payment handle to your (merchant) server) or respond to any errors caused by a failed payment handle creation.
 + An optional *closeCallback* function to handle the customer closing the payment overlay.
 
 The function signature is as follows:
@@ -290,36 +287,36 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |apiKey|string|yes||Your [Public API key](#publicapikey).|
-|[options](#options)|object|yes||Your configuration for rendering Checkout.|
+|[options](#options)|object|yes||Your configuration for rendering the Paysafe Checkout.|
 |[resultCallback](#resultcallback)|function|yes||You should invoke this function while passing the payment handle to make payment.|
-|[closeCallback](#closecallback)|function|no|| You should invoke this function when the customer closes the Checkout without making a payment.|
+|[closeCallback](#closecallback)|function|no|| You should invoke this function when the customer closes the Paysafe Checkout without making a payment.|
 
 <a name="options"></a>
 **options**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |currency|string|yes|`length=3`<br/>`Regex:[A-Z]`|The [currency of the merchant account](#currencycodes). For example, USD or CAD.|
-|merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from Checkout. |
-|amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer would have to enter the desired amount in the Checkout.|
-|environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Checkout. The default value is LIVE, if not specified.|
-|locale|string|no|Possible values is: en_US|Local language for the checkout.|
-|[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** Note: If both the addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays address information from the billingAddress object.|
-|singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). Displays any saved addresses and/or payment details in the Checkout.|
-|canEditAmount|boolean|no||If *true*, the customer can edit the amount in Checkout before clicking Pay. The amount is not editable if the value is *false*.|
+|merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from the Paysafe Checkout. |
+|amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Paysafe Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer must enter the desired amount in the Paysafe Checkout.|
+|environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Paysafe Checkout. The default value is LIVE, if not specified.|
+|locale|string|no|Possible values is: en_US|Local language for the Paysafe Checkout.|
+|[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during the checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** If both addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays the address information from the billingAddress object.|
+|singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). The Parameter displays any saved addresses and/or payment details in the Paysafe Checkout.|
+|canEditAmount|boolean|no||If *true*, the customer can edit the amount in the Paysafe Checkout before clicking Pay. The amount is not editable if the value is *false*.|
 |[customer](#customer)|object|no||You can choose to pass an existing customer profile in the call to create a payment handle for first-time customers having no customer profile.|
 |displayPaymentMethods|Array |no |Possible value is: NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
 |[paymentMethodDetails](#paymentmethoddetails)|object|conditional||Required for NETELLER payment type.|
-|payout |boolean |no | | If true, launches the **Withdrawal** Checkout screen. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
+|payout |boolean |no | | If true, launches the **Withdrawal** Checkout. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
 |[payoutConfig](#payoutconfig) |object | conditional | | Required for the Withdrawal Checkout only. This configuration is used to specify withdrawal limitations. |
 
 <a name="billingaddress"></a>
 **billingAddress**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|nickName|string|no|`length<=50`|An identifier to identify the type of address. For example, Work or Home.|
+|nickName|string|no|`length<=50`|An identifier to specify the type of address. For example, Work or Home.|
 |street|string|yes|`length<=50`|The first line of the address.|
 |street2|string|no|`length<=50`|The second line of the address.|
-|city|string|yes|`length<=40`|The city name in the address.|
+|city|string|yes|`length<=40`|The city name of the address.|
 |zip|string|yes|`length<=10`|The zip code of the address.|
 |country|string|yes|`length=2`|The country of the address. For example, GB. See [Country Codes](#countrycodes).|
 |state|string|yes|`length<=40`|The state of the address.|
@@ -338,9 +335,9 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 **dateOfBirth**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|year|number|yes|`length=4 min=1900`|This is the year of birth.|
-|month|number|yes|`length=2 max=12`|This is the month of birth.|
-|day|number|yes|`length=2 max=31`|This is the day of birth.|
+|year|number|yes|`length=4 min=1900`|The year of birth.|
+|month|number|yes|`length=2 max=12`|The month of birth.|
+|day|number|yes|`length=2 max=31`|The day of birth.|
 
 <a name="paymentmethoddetails"></a>
 **paymentMethodDetails**
@@ -353,9 +350,9 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 **payoutConfig**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|maximumAmount|number|yes|`length=1-9`|It specifies the maximum amount a customer is allowed to withdraw from checkout in the current session.|
+|maximumAmount|number|yes|`length=1-9`|It specifies the maximum amount a customer is allowed to withdraw from the Checkout in the current session.|
 
->**Note:**Checkout option is not applicable for Payout.
+>**Note:** The Paysafe Checkout option is not applicable for Payout.
 
 <a name="neteller"></a>
 **neteller**
@@ -364,22 +361,22 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. You must provide this while making a payout. |
 |recipientDescription   |string|no|`length<=30` |The description displayed on the NETELLER payment page.|
 |detail1Description     |string|no|             |Displays additional details of the product.|
-|detail1Text            |string|no|             |Additional descriptive text is displayed next to the detailed description (detail1Description) and displayed in the 'More Information' section in the header of the payment form with the other payment details.|
+|detail1Text            |string|no|             |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
 The Paysafe Checkout is displayed when the configuration provided in *options* is correctly validated.
 
 <a name="resultcallback"></a>
 #### resultCallback
 
-You should invoke the resultCallback when the payment handle is successfully created and is in the PAYABLE state or when there is an error in the Checkout. It also passes in an instance of the Checkout object.
+You should invoke the resultCallback when the payment handle is successfully created and is in the PAYABLE state or when there is an error in the Paysafe Checkout. It also passes in an instance of the Paysafe Checkout object.
 
-Using the functions provided in the *instance* object, you can control the checkout experience.
+Using the functions provided in the *instance* object, you can control the Paysafe Checkout experience.
 
 The *resultCallback* contains the following elements.
 
 |Parameter|Type|Required|Description|
 |---------|-------|---------------|-----------|
-|[instance](#instance)|object|yes|The Paysafe checkout instance.|
+|[instance](#instance)|object|yes|The Paysafe Checkout instance.|
 |[error](#error)|object|no|An object containing information for the error. This field is present if payment handle creation fails.|
 |[result](#result)|object|yes|Result containing payment token.|
 |{return}|undefined|false||
@@ -390,8 +387,8 @@ The *resultCallback* contains the following elements.
 |---------|-------|---------------|-----------|
 |isOpen|function|yes|Checks if the overlay is still open.|
 |close|function|yes|Closes the overlay without displaying payment result.|
-|showSuccessScreen|function|yes|Changes Checkout layout to success screen.|
-|showFailureScreen|function|yes|Changes Checkout layout to failure screen.|
+|showSuccessScreen|function|yes|Changes the Paysafe Checkout layout to success screen.|
+|showFailureScreen|function|yes|Changes the Paysafe Checkout layout to failure screen.|
 
 <a name="error"></a>
 **error**
@@ -408,18 +405,18 @@ The *resultCallback* contains the following elements.
 |paymentHandleToken|string|yes|The payment handle token to be passed to the Paysafe Payments API call.|
 |paymentMethod|string|yes|The payment method used by the customer.|
 |customerOperation|string|yes|The customer operation for the card. Values: ADD, EDIT or DELETE.|
-|amount|number|yes|The amount used to create the payment handle. This is required because the customer might change the amount in the Checkout.|
+|amount|number|yes|The amount used to create the payment handle. This is required because the customer might change the amount in the Paysafe Checkout.|
 
 <a name="closecallback"></a>
 #### closeCallback
-Invoked when the checkout overlay is closed by the customer. 
+Invoked when the Paysafe Checkout overlay is closed by the customer. 
 
 The *closeCallback* contains the following elements.
 
 |Parameter|Type|Required|Description|
 |---------|-------|---------------|-----------|
-|stage|string|yes|The Stage during which the Checkout overlay closes. Possible values are: *PAYMENT_HANDLE_NOT_CREATED*, *PAYMENT_HANDLE_CREATED*, *PAYMENT_HANDLE_REDIRECT*, *PAYMENT_HANDLE_PAYABLE* <ul><li>PAYMENT_HANDLE_NOT_CREATED: Customer did not click on the pay button, and did not proceed with the payment.</li><li>PAYMENT_HANDLE_CREATED: Customer clicked on the pay button, but Payment flow is incomplete.</li><li>PAYMENT_HANDLE_REDIRECT: Customer is redirected for authentication, but payment flow is incomplete.</li><li>PAYMENT_HANDLE_PAYABLE: Payment flow is complete and payment handle token is returned. You can now proceed with payment using the payment handle token.</li>  </ul>|
-|expired|boolean|yes|Indicates whether the *close* event is triggered after the Checkout expired.|
+|stage|string|yes|The Stage during which the Paysafe Checkout overlay closes. Possible values are: *PAYMENT_HANDLE_NOT_CREATED*, *PAYMENT_HANDLE_CREATED*, *PAYMENT_HANDLE_REDIRECT*, *PAYMENT_HANDLE_PAYABLE* <ul><li>PAYMENT_HANDLE_NOT_CREATED: Customer did not click on the pay button, and did not proceed with the payment.</li><li>PAYMENT_HANDLE_CREATED: Customer clicked on the pay button, but Payment flow is incomplete.</li><li>PAYMENT_HANDLE_REDIRECT: Customer is redirected for authentication, but payment flow is incomplete.</li><li>PAYMENT_HANDLE_PAYABLE: Payment flow is complete and payment handle token is returned. You can now proceed with payment using the payment handle token.</li>  </ul>|
+|expired|boolean|yes|Indicates whether the *close* event is triggered after the Paysafe Checkout expired.|
 |{return}|undefined|false|
 
 <a name="paymenthandleoverview" title="Payment Handle Overview"></a>
@@ -456,7 +453,7 @@ The possible value is:
 
 ### Execution Mode
 
-The *executionMode* parameter is a read-only value. Paysafe returns this in response to the payment handle creation request indicating whether the payment request completed or not.
+The *executionMode* parameter is a read-only value. Paysafe returns this in response to the payment handle creation request indicating whether the payment request is completed or not.
 
 The possible value is:
 * ASYNCHRONOUS – Completes the Payment after a significant time delay.
@@ -492,10 +489,10 @@ Webhooks will be triggered for the following events:
 |PAYMENT_FAILED | The payment request failed due to an error or a declined transaction. |
 |SETTLEMENT_COMPLETED | The settlement request is completed. |
 |SETTLEMENT_FAILED | The settlement request failed due to an error or a declined transaction. |
-|SA_CREDIT_COMPLETED | The credit request is completed. |
-|SA_CREDIT_HELD | The credit request is placed on hold due to risk considerations. |
-|SA_CREDIT_FAILED | The credit request failed due to an error or a declined transaction. |
-|SA_CREDIT_CANCELLED | The credit request is cancelled. |
+|SA_CREDIT_COMPLETED | The standalone credit request is completed. |
+|SA_CREDIT_HELD | The standalone credit request is placed on hold due to risk considerations. |
+|SA_CREDIT_FAILED | The standalone credit request failed due to an error or a declined transaction. |
+|SA_CREDIT_CANCELLED | The standalone credit request is cancelled. |
 
 
 ## Sample Webhooks Payload
@@ -537,7 +534,7 @@ This is an example of a typical webhooks payload received when a Payments call a
 |500|1007|An internal error occurred.|
 |500|1008|An internal error occurred.|
 |429|1200|The API call has been denied as it has exceeded the permissible call rate limit.|
-|401|5000|Your merchant account authentication failed. Either your store ID/password are invalid or the IP address from which you are sending the transaction has not been authorized.|
+|401|5000|Your merchant account authentication failed. Either your stored ID/password are invalid or the IP address from which you are sending the transaction has not been authorized.|
 |400|5001|The submitted currency code is invalid or your account does not support this currency.|
 |400|5003|You submitted an invalid amount with your request.|
 |400|5004|You submitted an invalid account type with your request.|
@@ -564,8 +561,6 @@ This is an example of a typical webhooks payload received when a Payments call a
 |401|5280|The required authentication credentials were not provided.|
 |405|5281|The request uses an action (for example, GET, POST, or PUT) that is not supported by the resource.|
 |400|5283|The requested operation can only be executed on a payment handle with the status of *PAYABLE*.|
-|400|5501|The profile does not have an active credit card.|
-|400|5502|Either the payment token is invalid or the corresponding profile or bank account is not active.|
 
 ## Payment Errors
 |HTTP Status Code|Error Code|Description|
@@ -1022,7 +1017,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
 |status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
 |merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
-|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>en_US</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating payment handle, the hosted checkout will be in the local language provided
+|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>en_US</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating payment handle, the hosted Checkout will be in the local language provided
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
@@ -1104,7 +1099,7 @@ This is a read-only raw response returned by an acquirer.
 |totalAmount         |number  |The total amount due for this order, including all items, fees, taxes.|
 |currency            |string  |The currency of the total amount due.  The order must have the same currency for all items, fees and taxes. <br/>see [Currencies](#currencies) for complete list|
 |status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
-|lang                |string  |The language that the Quick Checkout pages should be displayed in.<br/>see Languages for complete list|
+|lang                |string  |The language that the Paysafe Checkout should be displayed in.<br/>see [Languages](#Localecodes) for complete list|
 
 
 <a name="netellerobject" title="Neteller Object"></a>
@@ -1142,7 +1137,7 @@ This is a read-only raw response returned by an acquirer.
 |paymentType            |enum                       |This is the payment type associated with this payment handle. Possible value is:<ul><li>NETELLER</li></ul>|
 |action                 |enum                       |This read-only attribute specifies the next step of the customer journey once they proceed to the Payment. Possible values are:<ul><li>NONE &ndash; No action is required.</li><li>REDIRECT &ndash; The customer must be redirected in order to complete a Payment.</li></ul>|
 |executionMode          |enum                       |This read-only attribute specifies the action of the merchant server in order to complete the Payment. Possible values are:<ul><li>SYNCHRONOUS &ndash; The status of the Payment request will be returned synchronously to you.</li><li>ASYNCHRONOUS &ndash; The Payment request is not completed immediately and you [must rely on webhooks](#paymentswebhooks) to retrieve the status of the Payment request.</li></ul>|
-|amount                 |number<br/>`max=99999999999` |This is the amount of the request, in minor units.<br/>**Note:** This field is mandatory if *transactionType* is included. <br/>The *amount* specified in the payment handle request must match the *amount* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. |
+|amount                 |number<br/>`max=99999999999` |This is the amount of the request in minor units.<br/>**Note:** This field is mandatory if *transactionType* is included. <br/>The *amount* specified in the payment handle request must match the *amount* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. |
 |currencyCode           |string<br/>`length=3`      |This is the currency of the merchant account, for example, USD or CAD. See [Currency Codes](#currencycodes). <br/>The *currencyCode* specified in the payment handle request must match the *currencyCode* specified in the Paysafe Payments API request the *paymentHandleToken* is used for.|
 |paymentHandleToken     |string                     |This read-only attribute is the payment token generated by Paysafe that will be used by merchants for the Paysafe Payments API requests.|
 |neteller               |[neteller] (#netellerobject)| These are details of the payment instrument used in the request. |
@@ -1296,10 +1291,10 @@ This is a read-only raw response returned by an acquirer.
 |Element            |Type                                   |Description                        |
 |---                |---                                    |---                                |
 |id                 |string <br/>`length<=36`               |This read-only attribute is the ID returned in the response. You can use this ID for future associated requests.|
-|amount             |number<br/>`max=99999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Credit request must match the *amount* specified in the payment handle request from which the *paymentHandleToken* is taken.|
+|amount             |number<br/>`max=99999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Standalone Credit request must match the *amount* specified in the payment handle request from which the *paymentHandleToken* is taken.|
 |merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
 |paymentHandleToken |string                                 |This is the payment token generated by Paysafe that you can use for Standalone Credit requests.|
-|currencyCode       |string<br/>`length=3`                  |This is the currency of your account. For example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Credit request must match the *currencyCode* specified in the payment handle request from which the *paymentHandleToken* is taken.|
+|currencyCode       |string<br/>`length=3`                  |This is the currency of your account. For example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Standalone Credit request must match the *currencyCode* specified in the payment handle request from which the *paymentHandleToken* is taken.|
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |billingDetails     |[billingDetails](#billingdetailsobject)|These are the billing details for the request.|
 |customerIp         |string<br/>`length<=39`                |This is the customer's IP address.|
@@ -1962,10 +1957,10 @@ Click on **Get Standalone Credit Using Merchant Reference Number** above to see 
             + Members
                 + `pending`
                 + `cancelled`
-                + `failed` - The order was not paid.
+                + `failed` - The order was not paid
                 + `paid`
                 + `expired` - The order had expired (default: 15 mins)
-                + `lang` (string) - The language that the Quick Checkout pages should be displayed in. see Languages for complete list
+                + `lang` (string) - The language that the Paysafe Checkout should be displayed in. see [Languages](#Localecodes) for the complete list
        
 
 ## Metadata Object
@@ -1984,8 +1979,8 @@ Click on **Get Standalone Credit Using Merchant Reference Number** above to see 
                 _length<=50_
             + `recipientDescription`:`url_alt_text` (string, optional) - This is a description to be shown on the NETELLER payment page.
                 _length<=30_
-            + `detail1Description`: `Details 1 description` (string, optional) - You can show additional details about the product in the More information section in the header of Quick Checkout.
-            + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Dscription in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
+            + `detail1Description`: `Details 1 description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
+            + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
 
 ## OriginalCreditResponse (object)
 + `id`:`25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., lookups.
@@ -1994,9 +1989,9 @@ Click on **Get Standalone Credit Using Merchant Reference Number** above to see 
     _length<=255_
 + `paymentHandleToken`:`842778a0-03a2-11e9-8eb2-f2801f1b9fd1` (string, required) - This is the payment token generated by Paysafe that will be used for the request.
     _length<=36_
-+ `amount`:`1000` (string, required) - This is the amount of the request, in minor units. **Note:** The *amount* specified in the Credit request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
++ `amount`:`1000` (string, required) - This is the amount of the request, in minor units. **Note:** The *amount* specified in the Standalone Credit request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
     _Max =99999999999_
-+ `currencyCode`:`CAD` (string, required) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** The *currencyCode* specified in the Credit request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
++ `currencyCode`:`CAD` (string, required) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** The *currencyCode* specified in the Standalone Credit request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
     _max=3_
 + `dupCheck`:`true` (boolean) - This validates that this request is not a duplicate. A request is considered a duplicate if the merchantRefNum has already been used in a previous request within the past 90 days.
     + Default: true
