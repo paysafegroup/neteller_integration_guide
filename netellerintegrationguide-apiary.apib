@@ -72,13 +72,14 @@ Before you make your first API call, you must have the following information:
 <a name="paymentscheckout" title="Payments Checkout"></a>
 ## The Paysafe Checkout
 The Paysafe Checkout is an SDK that allows you to 
-- Take payment via NETELLER
-The Paysafe Checkout uses a secure overlay and handles the entry and storage information of the transaction for payment and standalone credit processing.
+- Take payment from your customers and
+- Process Standalone credits to your customers
+The Paysafe Checkout uses a secure overlay that handles the creation of payment handle and the subsequent redirection (in case of payments) to Neteller page for your customers to complete their authentication.
 
 ## How to use SDK
 1. You must include the Paysafe Checkout SDK in your HTML payment form.
 2. You must call the Checkout setup function using your Public API key. The setup function creates an iframe overlay that shows the processing loader and further redirects the customer to a new tab to complete the authentication. 
-You need to pass a callback function as part of the setup to process a payment handle success and failure.
+You need to pass a callback function as part of the setup options to receive the payment handle response.
 3. The callback should use AJAX to send the payment handle representing the customer's payment details to your (merchant) server to [make a payment](#paymentrequest) using the Paysafe Payments API.
 
 ## Including the SDK 
@@ -89,8 +90,8 @@ You need to include it in your HTML form by adding a `<script>` element in eithe
 </head>
 
 ## Example Payment Form
-The following code sample shows a minimal Paysafe Checkout example for NETELLER payments. The example shows how to create a payment overlay. 
-The overlay creates a payment handle for the data entered by the customer and displays the payment handle token (if successful) in the browser console.
+The following code sample shows a minimal Paysafe Checkout example for NETELLER payments, that creates and returns a payment handle token. 
+
 ```html
 <html>
     <head>
@@ -129,13 +130,11 @@ The overlay creates a payment handle for the data entered by the customer and di
                 },
                 "environment": "TEST",
                 "merchantRefNum": "1559900597607",
-                "canEditAmount": true,
+                "canEditAmount": false,
                 "paymentMethodDetails": {
                     "neteller": {
-                         "consumerId":"neteller.account@example.org",
-                         "detail1Description":"Details 1 description",
-                         "detail1Text":"Details 1 text"
-                    },
+                        "consumerId": "john.doe@email.com"
+                    }
                 }
             }, function(instance, error, result) {
                 if (result && result.paymentHandleToken) {
@@ -159,7 +158,8 @@ The overlay creates a payment handle for the data entered by the customer and di
 </html>
 ```
 ##Example Withdrawal Form
-The following code sample shows a minimal Paysafe Withdrawal Checkout example that creates a payment overlay. The overlay creates a payment handle for the data entered by the user and displays the payment handle token (if successful) in the browser console.
+The following code sample shows a minimal Paysafe Withdrawal Checkout example for Neteller withdrawal, that creates and returns a payment handle token.
+
 ```html
 <html>
     <head>
@@ -199,26 +199,14 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example th
                 },
                 "environment": "TEST",
                 "merchantRefNum": "1559900597607",
-                "canEditAmount": "true",
+                "canEditAmount": "false",
                 "payout":"true", 
                 "payoutConfig":{
                     "maximumAmount": 100000
                     },
-                "displayPaymentMethods":["skrill","card","instantach"],
                 "paymentMethodDetails": {
-                    "sightline": {
-                        "consumerId": "123456"
-                    },
-                    "skrill": {
-                        "consumerId": "john.doe@email.com",
-                        "emailSubject": "Skrill Payout",
-                        "emailMessage": "Your Skrill Payout request has been processed"
-                    },
-                    "instantach": {
-                        "consumerId": "john.doe@email.com",
-                        "paymentId": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
-                        "emailSubject": "Instant ACH Payout",
-                        "emailMessage": "Your Instant ACH Payout request has been processed"
+                    "neteller": {
+                        "consumerId": "john.doe@email.com"
                     }
                 }
             }, function(instance, error, result) {
@@ -275,7 +263,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |canEditAmount|boolean|no||If *true*, the customer can edit the amount in the Paysafe Checkout before clicking Pay. The amount is not editable if the value is *false*.|
 |[customer](#customer)|object|no||You can choose to pass an existing customer profile in the call to create a payment handle for first-time customers having no customer profile.|
 |displayPaymentMethods|Array |no |Possible value is: NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
-|[paymentMethodDetails](#paymentmethoddetails)|object|conditional||Required for NETELLER payment type.|
+|[paymentMethodDetails](#paymentmethoddetails)|object|conditional||Required for NETELLER. |
 |payout |boolean |no | | If true, launches the **Withdrawal** Checkout. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
 |[payoutConfig](#payoutconfig) |object | conditional | | Required for the Withdrawal Checkout only. This configuration is used to specify withdrawal limitations. |
 
@@ -326,7 +314,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 **neteller**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. You must provide this while making a Standalone Credit request. |
+|consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. |
 |recipientDescription   |string|no|`length<=30` |The description displayed on the NETELLER payment page.|
 |detail1Description     |string|no|             |Displays additional details of the product.|
 |detail1Text            |string|no|             |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
@@ -382,10 +370,10 @@ The *closeCallback* contains the following elements.
 
 <a name="paymenthandleoverview" title="Payment Handle Overview"></a>
 # Payment Handle Overview
-A payment handle is a token that represents a payment method you set up for a customer.
+A payment handle is a token that represents the customer's profile and payment method details.
 A payment handle includes information of your NETELLER request and the type of transaction it uses. When you create a payment handle, the Paysafe Payments API returns a *paymentHandleToken* in the response. That token represents customer payment information you need to include in the NETELLER payment request.
-You must create a separate payment handle for each transaction type/payment type combination. 
-Payment handles typically have a lifespan of 15 minutes and you can use it only once.
+For every transaction, You must create a new payment handle before you can process Payments or Standalone Credits. 
+Payment handles typically have a lifespan of 15 minutes and you can use it only once. A payment or Standalone Credit can only be processed if the corresponding Payment Handle token is in PAYABLE state.
 
 ## Some Important Parameters
 A few additional parameters are important during the creation of a payment handle because they have a significant impact on how you use the generated payment token (*paymentHandleToken*): 
@@ -407,13 +395,12 @@ The possible value is:
 ### Execution Mode
 The *executionMode* parameter is a read-only value. Paysafe returns this in response to the payment handle creation request indicating whether the payment request is completed or not.
 The possible value is:
-* ASYNCHRONOUS – Completes the Payment after a significant time delay.
+* ASYNCHRONOUS – The Payment is completed after a time delay.
 
 # How to process a NETELLER Payment
 To process a NETELLER payment, you have to make the following API calls:
 * Create payment handle 
-* Get payment handle 
-* Confirm payment
+* Process payment
 
 ![Payment- Transfer In](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/payments.png)
 
@@ -425,13 +412,13 @@ To process a NETELLER Standalone credit, you have to make the following API call
 ![Standalone Credit- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are intact. However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in Neteller merchant dashboard. However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
 |----------|-----------|
 |PAYMENT_HANDLE_PAYABLE | The payment handle status is PAYABLE. You can use it for the payment call. |
-|PAYMENT_HANDLE_COMPLETED | Payments call that is associated with payment handle is initiated. |
+|PAYMENT_HANDLE_COMPLETED | Payments call is received for the associated payment handle. |
 |PAYMENT_HANDLE_FAILED | The payment handle request failed. The failure could be due to an error or a declined transaction. |
 |PAYMENT_COMPLETED | The payment request is completed. |
 |PAYMENT_HELD | The payment request is placed on hold due to risk considerations. |
@@ -444,7 +431,7 @@ Webhooks will be triggered for the following events:
 |SA_CREDIT_CANCELLED | The standalone credit request is cancelled. |
 
 ## Sample Webhooks Payload
-This is an example of a typical webhooks payload received when a Payments call associated with a payment handle is completed.
+This is an example of a typical webhooks payload received when a Payments call is received for an associated payment handle.
 
 ```
 {
