@@ -18,14 +18,14 @@ The Paysafe Payments API uses two distinct API keys:<br/>
 * The Secret Key – used for all server-to-server API requests.</li>
 * The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
-You can retrieve your Secret and Public keys for both the Test & Live accounts via the NETELLER Merchant Portal:
+You can retrieve your Secret and Public keys for both the Test & Live accounts via the NETELLER Merchant Dashboard:
 * [Live](https://merchant.neteller.com)
 * [Test](https://test.merchant.neteller.com/)
 
 Your API keys will look something like this:
 * Key Username – MerchantXYZKey 
 * Password – B-tst1-0-51ed39e4-312d02345d3f123120881dff9bb4020a89e8ac44cdfdcecd702151182fdc952272661d290ab2e5849e31bb03deede7e
-> **Note:** This is not the same as your login credentials to the [NETELLER Merchant Portal](https://merchant.neteller.com). The case-sensitive API key is sent using HTTP Basic Authentication. 
+> **Note:** This is not the same as your login credentials to the [NETELLER Merchant Dashboard](https://merchant.neteller.com). The case-sensitive API key is sent using HTTP Basic Authentication. 
 To use HTTP Basic Authentication, you must send the API key credentials using the Authorization header with every request.
 Construct the Authorization header as follows:
 1. Combine the Key Username and Key Password into a string separated by a colon, for example, “Key Username:Key Password”..
@@ -68,7 +68,7 @@ The API endpoint (URI or URL) points to either the Test or Production (live) env
 ### Making API Calls
 Before you make your first API call, you must have the following information:
 * **API endpoint**: This is the URL to which you send your request, and its format depends on the type of API call.
-* **API key**: Paysafe provides you with the credentials in the [NETELLER Merchant Portal](https://merchant.neteller.com). You must include the API key in the Authorization HTTPS header.
+* **API key**: Paysafe provides you with the credentials in the [NETELLER Merchant Dashboard](https://merchant.neteller.com). You must include the API key in the Authorization HTTPS header.
 * **Message body**: This must contain valid Paysafe JSON objects as required for the type of request. Not all API calls require a message-body; for example, GET requests do not require a body.
 * **Resource ID**: Identifies the unique ID of a resource.
 ![Structure of a Typical Payments API Request](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/authentication_example_payments.png)
@@ -163,7 +163,7 @@ The following code sample shows a minimal Paysafe Checkout example for NETELLER 
 </html>
 ```
 ##Example Withdrawal Form
-The following code sample shows a minimal Paysafe Withdrawal Checkout example for Neteller withdrawal, that creates and returns a payment handle token.
+The following code sample shows a minimal Paysafe Withdrawal Checkout example for NETELLER withdrawal, that creates and returns a payment handle token.
 
 ```html
 <html>
@@ -417,7 +417,7 @@ To process a NETELLER Standalone credit, you have to make the following API call
 ![Standalone Credit- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [Neteller Merchant Portal](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [Neteller Merchant Dashboard](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
