@@ -48,7 +48,7 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 ###Direct Transfer to Merchant: Payment    
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)</td></tr></tbody></table> | <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Confirm Payment</li></td></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li> POST [/payments](#paymentrequest)</li></td></tr></tbody></table>|
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Request Payment (customer to merchant transfer)</td><td>POST [/v1/transferIn](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/request-payment)</td></tr></tbody></table> | <table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Create a Payment Handle</li><li>Process Payments</li></td></td><td><li>POST [/paymenthandles](#paymenthandlerequest)</li><li> POST [/payments](#paymentrequest)</li></td></tr></tbody></table>|
 ###Direct Transfer from Merchant: Standalone Credit   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
@@ -1563,14 +1563,14 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
 
 Payment requests allow you to process a payment using the [*paymentHandleToken*](#paymenthandlerequest) that you have previously created for the payment instrument you want to use.
 
-## Confirm Payment
+## Process Payments
 
 Payment requests allow you to process a payment using the *paymentHandleToken* that you have created. In a single request, the payment is authorized and settled. You need to set the *settleWithAuth* parameter to true. The examples below include a *paymentHandleToken* created for NETELLER.
 
-### Confirm Payment [POST]
+### Process Payments [POST]
 <a name="paymentrequest" title="Post Payment Using Payment Handle Token"></a>
 
-Click on **Confirm Payment** above to see how to create a Payment request using a Payment Handle token.
+Click on **Process Payments** above to see how to create a Payment request using a Payment Handle token.
 
 + Attributes 
   + Include PaymentsRequest
