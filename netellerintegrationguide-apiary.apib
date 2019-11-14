@@ -262,7 +262,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from the Paysafe Checkout. |
 |amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Paysafe Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer must enter the desired amount in the Paysafe Checkout.|
 |environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Paysafe Checkout. The default value is LIVE, if not specified.|
-|locale|string|no|Possible values is: en_US|The language that the NETELLER pages should be displayed in|
+|locale|string|no|Possible value is: [en_US](#languages)|The language that the NETELLER pages should be displayed in|
 |[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during the checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** If both addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays the address information from the billingAddress object.|
 |singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). The Parameter displays any saved addresses and/or payment details in the Paysafe Checkout.|
 |canEditAmount|boolean|no||If *true*, the customer can edit the amount in the Paysafe Checkout before clicking Pay. The amount is not editable if the value is *false*.|
@@ -926,7 +926,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 | Zambia                            | ZM |
 | Zimbabwe                          | ZW |
 
-<a name="Localecodes" title="Locale Codes"></a>
+<a name="languages" title="Languages"></a>
 ## Languages
 
 | Description | Language Code |
@@ -1015,7 +1015,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
 |status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for Payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
 |merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
-|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>en_US</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating Payment Handle, the hosted Checkout will be in the local language provided
+|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating Payment Handle, the hosted Checkout will be in the local language provided
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
@@ -1217,7 +1217,7 @@ This is a read-only raw response returned by an acquirer.
 
 |Element            |Type                               |Description    |
 |---                |---                                |---            |
-|locale             |enum                               |This indicates the language of the profile. Possible values are:<ul><li>en_US</li><li>fr_CA</li><li>en_GB</li></ul>|
+|locale             |enum                               |This indicates the language of the profile. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul>|
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
 |email              |string<br/>`length<=255`           |This is the customer's email address.|
