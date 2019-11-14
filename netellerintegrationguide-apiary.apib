@@ -18,7 +18,7 @@ The Paysafe Payments API uses two distinct API keys:<br/>
 * The Secret Key – used for all server-to-server API requests.</li>
 * The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
-You can retrieve your Secret and Public keys for both the Test & Live accounts via the NETELLER Merchant Dashboard:
+You can retrieve your Secret and Public keys for both the Test & Live accounts via the [NETELLER Merchant Dashboard](https://merchant.neteller.com):
 * [Live](https://merchant.neteller.com)
 * [Test](https://test.merchant.neteller.com/)
 
@@ -28,7 +28,7 @@ Your API keys will look something like this:
 > **Note:** This is not the same as your login credentials to the [NETELLER Merchant Dashboard](https://merchant.neteller.com). The case-sensitive API key is sent using HTTP Basic Authentication. 
 To use HTTP Basic Authentication, you must send the API key credentials using the Authorization header with every request.
 Construct the Authorization header as follows:
-1. Combine the Key Username and Key Password into a string separated by a colon, for example, “Key Username:Key Password”..
+1. Combine the Key Username and Key Password into a string separated by a colon, for example, “Key Username:Key Password”.
 2. The resulting string literal is then encoded using Base64.
 3. Put the authorization method and a space (i.e., “Basic”) before the encoded string. 
 For example, using the Key Username and Password examples above, the header is formed as follows:
@@ -79,7 +79,7 @@ The Paysafe Checkout is an SDK that allows you to
 - Take payment from your customers 
 - Process Standalone credits to your customers
 
-The Paysafe Checkout uses a secure overlay that handles the creation of payment handle and the subsequent redirection (in case of payments) to Neteller page for your customers to complete their authentication.
+The Paysafe Checkout uses a secure overlay that handles the creation of payment handle and the subsequent redirection (in case of payments) to NETELLER page for your customers to complete their authentication.
 
 ## How to use SDK
 1. You must include the Paysafe Checkout SDK in your HTML payment form.
@@ -417,7 +417,7 @@ To process a NETELLER Standalone credit, you have to make the following API call
 ![Standalone Credit- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [Neteller Merchant Dashboard](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [NETELLER Merchant Dashboard](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
