@@ -56,7 +56,7 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 ###Lookup   
 |NETELLER REST API Endpoints |Paysafe Payments API Endpoints |
 |----------|----------|
-<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Payment - Lookup Payment(s)</td><td>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Get Payment</li><li>Get Standalone Credit</li></td><td><li>GET [/payments](#getpayment)</li><li>GET [/standalonecredits](#getstandalonecredit)</li></td></tr></tbody></table>|
+<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td>Payment - Lookup Payment(s)</td><td>GET [/v1/payments/{ID}](https://paysafegroup.github.io/neteller_rest_api_v1/#/reference/0/payments/lookup-a-payment)</td></tr></tbody></table>|<table><tr><th>Name</th><th>Endpoint</th></tr><tbody><tr><td><li>Get Payment</li><li>Get Standalone Credit</li></td><td><li>GET [/payments](#getpayment)</li><li>GET [/standalonecredits](#getstandalonecredits)</li></td></tr></tbody></table>|
 <a name="apiIntegration" title="Direct API Integration"></a>
 ## Direct API Integration
 The Paysafe Payments API allows you to process payment-related requests using the REST protocol. The protocol uses JSON for all requests and responses.
@@ -1759,8 +1759,8 @@ Click on **Process Standalone Credits** above to see how to process a Standalone
               "description": "Pay surplus"
             }
 
-## Get Standalone Credit [GET /v1/standalonecredits/{standaloneCreditId}]
-<a name="getstandalonecredit" title="Look Up a Standalone Credit"></a>
+## Get Standalone Credits [GET /v1/standalonecredits/{standaloneCreditId}]
+<a name="getstandalonecredits" title="Look Up Standalone Credits"></a>
 
 Click on **Get Standalone Credits** above to see how to look up Standalone Credits using the ID returned in the response to the original request.
 
@@ -1802,16 +1802,16 @@ Click on **Get Standalone Credits** above to see how to look up Standalone Credi
             }
             }
             
-## Get Standalone Credit Using Merchant Reference Number  [GET /v1/standalonecredits?merchantRefNum={merchantRefNum}]
+## Get Standalone Credits Using Merchant Reference Number  [GET /v1/standalonecredits?merchantRefNum={merchantRefNum}]
 <a name="getstandalonecreditmerchantrefnum" title="Look Up a Standalone Credit Using a Merchant Reference Number"></a>
 
-Click on **Get Standalone Credit Using Merchant Reference Number** above to see how to look up Standalone Credits using the merchant reference number used in the original request.
+Click on **Get Standalone Credits Using Merchant Reference Number** above to see how to look up Standalone Credits using the merchant reference number used in the original request.
 
 + Parameter
 
    + merchantRefNum : "merchantRefNum-151"
 
-+ Request Look Up Standalone Credit Using Merchant Reference Number (application/json)
++ Request Look Up Standalone Credits Using Merchant Reference Number (application/json)
 
     + Headers
 
