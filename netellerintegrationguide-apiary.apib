@@ -2031,13 +2031,16 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 ## `Payment Instrument`
 
 + neteller (object) - These are the details of the [neteller](#netellerobject) used for the request. 
-    + `consumerId`:`(string, required)` - The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request.
-    + `recipientDescription`:`(string, required)` - The description to be shown on the NETELLER payment page.
-    + `detail1Description`:`string` - Displays additional details about the product.
-    + `detail1Text`:`string` - Displays additional descriptive text next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.
-                
- 
-   ## Payment Methods Get
+        + Properties
+            + `consumerId`:`merchantclientid` (string, required) - The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request.
+            + `recipientDescription`:`18` (number) - The description to be shown on the NETELLER payment page.
+            + `detail1Description`:`SIMPLE` (string) - Displays additional details about the product.
+            + `detail1Text`:`DE` (string) - Displays additional descriptive text next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.
+                _length=2_
+
+
+
+## Payment Methods Get
 + paymentMethods (object)
     + `paymentMethod`: (enum) - This is the payment type associated with this payment method.
         _Read Only_
