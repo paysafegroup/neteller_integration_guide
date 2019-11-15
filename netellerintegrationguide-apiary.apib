@@ -38,7 +38,7 @@ For additional details, please refer [here](http://en.wikipedia.org/wiki/Basic_a
 <a name="integrationmethods" title="Choosing Your Integration"></a>
 # Choosing Your Integration
 The Paysafe Payments API supports two integration types: 
- 1. [Direct API Integration](#apiIntegration): This method allows you to collect customer payment information on your website while processing transactions. In the case of NETELLER Payments, you need to redirect your customer to the hosted Checkout to complete the transaction.
+ 1. [Direct API Integration](#apiIntegration): This method allows you to collect customer payment information on your website while processing transactions. In the case of NETELLER Payments, you need to redirect your customer to the NETELLER page to complete the transaction.
  2. [The Paysafe Checkout](#paymentscheckout): This method allows you to take Payments via any payment method using a secure overlay that is hosted by Paysafe. In the case of NETELLER, the Paysafe Checkout handles the transaction.
 
 # API Changes
@@ -1015,7 +1015,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
 |status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for Payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
 |merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
-|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating Payment Handle, the hosted Checkout will be in the local language provided
+|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating Payment Handle, the NETELLER page will be in the local language provided
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
