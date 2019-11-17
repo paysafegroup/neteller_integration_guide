@@ -262,7 +262,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from the Paysafe Checkout. |
 |amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Paysafe Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer must enter the desired amount in the Paysafe Checkout.|
 |environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Paysafe Checkout. The default value is LIVE, if not specified.|
-|locale|string|no|Possible value is: [en_US](#languages)|The language that the NETELLER pages should be displayed in|
+|locale|string|no||The language that the NETELLER pages should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported.|
 |[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during the checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** If both addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays the address information from the billingAddress object.|
 |singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). The Parameter displays any saved addresses and/or payment details in the Paysafe Checkout.|
 |canEditAmount|boolean|no||If *true*, the customer can edit the amount in the Paysafe Checkout before clicking Pay. The amount is not editable if the value is *false*.|
@@ -400,7 +400,8 @@ The possible value is:
 ### Execution Mode
 The *executionMode* parameter is a read-only value. Paysafe returns this in response to the Payment Handle creation request indicating whether the payment request is completed or not.
 The possible value is:
-* ASYNCHRONOUS – The Payment is completed after a time delay.
+
+* SYNCHRONOUS - The Payment status is sent to the Merchant synchronously. In case of timeouts, you will receive webhook notifications in the configured URL. 
 
 # How to process NETELLER Payments
 To process NETELLER Payments, you have to make the following API calls:
@@ -610,6 +611,7 @@ Sample Response with List Data
 ```
 <a name="isostandards" title="ISO Standards"></a>
 # ISO Standards
+
 <a name="Localecodes" title="Locale Codes"></a>
 ## Locale Codes
 
@@ -631,6 +633,7 @@ Sample Response with List Data
 |Swedish        |sv_SE     |
 |Turkish        |tr_TR     |
 |Simplified Chinese     |zh_CN     |
+
 <a name="currencycodes" title="Currency Codes"></a>
 ## Currency Codes
 **Note**
@@ -926,28 +929,6 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 | Zambia                            | ZM |
 | Zimbabwe                          | ZW |
 
-<a name="languages" title="Languages"></a>
-## Languages
-
-| Description | Language Code |
-|---            |---    |
-|Danish         |da_DK  |
-|German         |de_DE     |
-|Greek          |el_GR     |
-|English        |en_US     |
-|Spanish        |es_ES  |
-|French         |fr_FR     |
-|Italian        |it_IT     |
-|Japanese       |ja_JP       |
-|Korean         |ko_KR     |
-|Norwegian      |no_NO     |
-|Polish         |pl_PL  |
-|Portuguese     |pt_PT     |
-|Russian        |ru_RU     |
-|Swedish        |sv_SE     |
-|Turkish        |tr_TR     |
-|Simplified Chinese     |zh_CN     |
-
 # Common Objects
 <a name="addressesobject" title="Addresses Object"></a>
 ## addresses
@@ -1015,7 +996,7 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
 |status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for Payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
 |merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
-|locale             |enum                               |This indicates the language of the customer. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul> <br/> **Note:** If you provide locale under profile object while creating Payment Handle, the NETELLER page will be in the local language provided
+|locale             |enum                               |The language that the NETELLER pages should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported. 
 |firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
 |middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
@@ -1097,7 +1078,7 @@ This is a read-only raw response returned by an acquirer.
 |totalAmount         |number  |The total amount due for this order, including all items, fees, taxes.|
 |currency            |string  |The currency of the total amount due.  The order must have the same currency for all items, fees and taxes. <br/>see [Currencies](#currencies) for complete list|
 |status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
-|lang                |string  |The language that the Paysafe Checkout should be displayed in.<br/>see [Languages](#Localecodes) for complete list|
+|lang                |string  |The language that the Paysafe Checkout should be displayed in.<br/>See [Possible values](#Localecodes) for a complete list of languages supported.|
 
 
 <a name="netellerobject" title="Neteller Object"></a>
@@ -1217,9 +1198,9 @@ This is a read-only raw response returned by an acquirer.
 
 |Element            |Type                               |Description    |
 |---                |---                                |---            |
-|locale             |enum                               |This indicates the language of the profile. Possible values are:<ul><li>[en_US](#languages)</li><li>fr_CA</li><li>en_GB</li></ul>|
-|firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
-|lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
+|locale             |enum                               |This indicates the language of the profile. See [Possible values](#Localecodes) for a complete list of languages supported.|
+|firstName          |string <br/>`length<=80`           |This is the customer’s first name.|
+|lastName           |string <br/>`length<=80`           |This is the customer’s last name.|
 |email              |string<br/>`length<=255`           |This is the customer's email address.|
 |phone              |string<br/>`length<=40`            |This is the customer's phone number.|
 |dateOfBirth        |[dateOfBirth](#dateofbirthobject)  |These are the addresses associated with saved payment instruments for the customer. |
@@ -1956,7 +1937,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
                 + `failed` - The order was not paid
                 + `paid`
                 + `expired` - The order had expired (default: 15 mins)
-                + `lang` (string) - The language that the Paysafe Checkout should be displayed in. see [Languages](#Localecodes) for the complete list
+                + `lang` (string) - The language that the Paysafe Checkout should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported.
        
 
 ## Metadata Object
@@ -2156,11 +2137,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _length<=80_
     + `lastname`:`Smyth` (string) - This is the customer's last name.
         _length<=80_
-    + `locale`:`ca_en` (enum) - This indicates the customer's locale.
-        + Members
-            + en_US
-            + fr_CA
-            + en_GB
+    + `locale`: (enum) - The language that the NETELLER pages should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported.
     + Include Date of Birth
     + `email`:`jane.smyth@email.com` (string) - This is the customer's email address.
         _length<=255_
