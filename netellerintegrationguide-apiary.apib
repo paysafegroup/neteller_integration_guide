@@ -1999,79 +1999,62 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + Include Metadata Object
 
 ## paymentHandleRequest (object)
-
 + `id`:`26359efd-7cfb-4014-a13d-1724e3ff17fa` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e.g., to look up the Payment Handle. 
-    _Read Only, length<=36_
+        _Read Only, length<=36_
++ `paymentHandleTokenFrom`:`7576835c-0396-11e9-8eb2-f2801f1b9fd1` (string) - This is an existing [Payment Handle token created for a customer](#createcustomerpaymenthandlerequest), from which payment instrument and profile details can be retrieved.
+        _length<=36_
 + `merchantRefNum`:`merchantRefNum-101` (string, required) - This is the merchant reference number created by the merchant and submitted as part of the request. It must be unique for each request.
-    _length<=255_
-+ `transactionType`: (enum, required) - This specifies the transaction type for which the Payment Handle is created.
+        _length<=255_
++ `transactionType`: (enum, required) - This specifies the transaction type for which the Payment Handle is created. 
     + Members
         + PAYMENT - Payment Handle is created to continue the Payment.
-        + STANDALONE_CREDITS - Payment Handle is created to continue the Standalone Credits.
-        + ORIGINAL_CREDITS - Payment Handle is created to continue the Original Credits.
+        + STANDALONE_CREDIT - Payment Handle is created to continue the Standalone Credit.
+        + ORIGINAL_CREDIT - Payment Handle is created to continue the Original Credit.
         + VERIFICATION - Payment Handle is created to continue the Verification request.
-+ `accountId`:`9876543210` (string) - This is the merchant account number used for the request. Include this optional parameter if you have more than one merchant account for the currency/payment type combination you are specifying.
-    _length<=10_
-+ `status`:`PAYABLE` (enum) - This is the status of the transaction request.
-    _Read Only_
++ `status`: (enum) - This is the status of the transaction request.
+        _Read Only_
     + Members
+        + RECEIVED - Paysafe has received the request and is waiting for the downstream processor’s response.
         + INITIATED - The transaction was initiated with the downstream provider.
         + PAYABLE - The merchant can use the Payment Handle for a Payment request.
         + PROCESSING - The Payment Handle was authorized by customer, awaiting PSP response.
         + FAILED - The transaction failed due to either an error or being declined. 
+        + CANCELLED - The authorization request has been fully reversed.
         + EXPIRED - The Payment Handle expired because the merchant did not proceed with the Payment request. 
         + COMPLETED - The Payment request was initiated successfully using the Payment Handle.
 + `usage`:`SINGLE_USE` (enum) - This specifies how the Payment Handle will be used for Payments.
-    _Read Only_
+        _Read Only_
     + Members
         + SINGLE_USE - The Payment Handle can be used for one transaction only and expires if not used.
-+ `paymentType`: (enum, required) - This is the payment type associated with this Payment Handle. If applicable, you need to pass the corresponding payment type object as listed after this parameter.
++ `paymentType`: (enum, required) - This is the payment type associated with this Payment Handle. If applicable, you need to pass the corresponding payment type object as listed after this parameter. 
     + Members
-        + CARD
-        + PAYSAFECASH
-        + PAYSAFECARD
-        + SIGHTLINE
-        + SKRILL
-        + INSTANTACH
-        + VIPPREFERRED
-        + INSTANTACH
-+ `action`:`NONE` (enum) - This specifies the next step of the user journey once they proceed to the Payment.
-    _Read Only_
+        + NETELLER
++ Include neteller
++ `action`: (enum) - This specifies the next step of the user journey once they proceed to the Payment.
     + Members
-        + NONE - No action is required, e.g., for a standard credit card Payment.
-        + REDIRECT -The user must be redirected in order to complete a Payment, e.g., when an alternate payment method like Paysafecard is used.
-+ `executionMode`:`SYNCHRONOUS` (enum) - This specifies the action of the merchant server in order to complete the Payment.
+        + NONE
+        + REDIRECT
++ `executionMode`: (enum) - This specifies the action of the merchant server in order to complete the Payment.
     + Members
         + ASYNCHRONOUS - The Payment request is not completed immediately and the merchant [must rely on webhooks](#paymentswebhooks) to retrieve the status of the Payment request.
-        + SYNCHRONOUS - The status of the Payment request will be returned synchronously to the merchant, e.g., a credit card request.
+        + SYNCHRONOUS - The status of the Payment request will be returned synchronously to the merchant.
 + `amount`:`1000` (string) - This is the amount of the request, in minor units. **Note:** This field is mandatory if *transactionType* is included. The *amount* specified in the Payment Handle request must match the *amount* specified in the Payments API request the *paymentHandleToken* is used for.
-    _Max =99999999999_
+        _Max =99999999999_
 + `currencyCode`:`CAD` (string) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** This field is mandatory if *transactionType* is included. The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Payments API request the *paymentHandleToken* is used for.
-    _Read Only, max=3_
-+ `paymentHandleTokenFrom`:`SCyGZDlUuZ9zxjyd` (string) - This is an [existing Customer Payment Handle](#createcustomerpaymenthandlerequest), from which the payment instrument and profile details are retrieved. If this parameter is included you can omit the *billingDetails* object.
-    _length<=36_
-+ cvv:`123` (string) - This is the 3- or 4-digit security code that appears on the card following the card number.  **Note:** The *cvv* value is **required** if you include the parameter *paymentHandleTokenFrom*.
-    _length=3-4_
-+ `paymentHandleToken`:`SCO3wKcIyLoQbQvw` (string) - This is the payment token generated by Paysafe that will be used by merchants for Payment API requests.
-    _Read Only, length<=36_
+        _max=3_
++ `paymentHandleToken`:`842778a0-03a2-11e9-8eb2-f2801f1b9fd1` (string) - This is the payment token generated by Paysafe that will be used by merchants for Payment API requests.
+        _Read Only, length<=36_
 + Include Profile
 + Include Billing Details
-+ `returnLinks` (object) - The URL endpoints to redirect the customer to after a redirection to an alternative payment or 3D Secure site. You can customize the return URL based on the transaction status. 
-    + `rel`(enum) - This is the link type, allowing different endpoints to be targeted depending on the end state of the transaction. The link relation describes how this link relates to the previous call. 
-        + default (string, required) - The default return URL that will be used if specific status return URL is not defined.
-        + on_completed (string) - Will be returned to this URL if the payment is completed.
-        + on_failed (string) - Will be returned to this URL if the payment fails.
-    + `href` - The actual URL
-    + `method` - The HTTP method
-+ links (object) - This is an array of links related to the resource.
-    + `rel`: `redirect_payment` (enum)
-    + `href`:`http://api.paysafe.com/card/redirect/372b5ee7-6360-4403-b444-164f8f1d2709`
-    + `method`:`GET`
++ `link` (object) - This is an array of links related to the resource.
+        + `rel`:`redirect_payment` (enum)
+        + `href`:`http://api.paysafe.com/neteller/redirect/372b5ee7-6360-4403-b444-164f8f1d2709`
+        + `method`:`GET`
 + `customerIp`:`111.111.111.111` (string) - This is the customer's IP address.
-    _length<=39_
+        _length<=39_
 + `timeToLiveSeconds`:`899` (number) - This is the period of time, in seconds, the *paymentHandleToken* is valid before expiration. 
-    _Read Only, length<=899_
-+ Include Metadata Object
+        _Read Only, length<=899_
+
 
 ## Payment Methods Get
 + paymentMethods (object)
