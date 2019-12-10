@@ -204,8 +204,8 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example fo
                 },
                 "environment": "TEST",
                 "merchantRefNum": "1559900597607",
-                "canEditAmount": "false",
-                "payout":"true", 
+                "canEditAmount": false,
+                "payout":true, 
                 "payoutConfig":{
                     "maximumAmount": 100000
                     },
@@ -321,8 +321,8 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. |
 |recipientDescription   |string|no|`length<=30` |The description displayed on the NETELLER payment page.|
-|detail1Description     |string|no|             |Displays additional details of the product.|
-|detail1Text            |string|no|             |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
+|detail1Description     |string|no|`length<=150`|Displays additional details of the product.|
+|detail1Text            |string|no|`length<=15` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
 The Paysafe Checkout is displayed when the configuration provided in *options* is correctly validated.
 <a name="resultcallback"></a>
@@ -1088,8 +1088,8 @@ This is a read-only raw response returned by an acquirer.
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
 |recipientDescription   |string<br/>`length<=30`    |The description to be shown on the NETELLER payment page.|
-|detail1Description     |string                     |You can show additional details about the product. |
-|detail1Text            |string                     |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
+|detail1Description     |string<br/>`length<=150`   |You can show additional details about the product. |
+|detail1Text            |string<br/>`length<=15`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
 ```{   
     "neteller":{ 
@@ -1110,7 +1110,7 @@ This is a read-only raw response returned by an acquirer.
 |accountId              |string<br/>`length<=10`    |This is the merchant account number used for the request. Include this parameter if you have more than one merchant account for the currency/payment type combination you are specifying. |
 |paymentHandleTokenFrom |string<br/>`length<=36`    |This is an existing paymentHandle ID created for a customer, from which the payment instrument and profile details are retrieved. |
 |merchantRefNum         |string<br/>`length<=255`   |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request. |
-|transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDITS</li><li>ORIGINAL_CREDITS</li><li>VERIFICATION</li></ul>|
+|transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDITS</li></ul>|
 |status                 |enum                       |This read-only attribute is the status of the request. Possible values are:<ul><li>INITIATED &ndash; The request was initiated with the downstream provider.</li><li>PAYABLE &ndash; You can use the Payment Handle for a Payment request.</li><li>PROCESSING &ndash; The Payment Handle was authorized by customer, awaiting PSP response.</li><li>FAILED &ndash; The transaction failed due to either an error or being declined.</li><li>EXPIRED &ndash; The Payment Handle expired because you did not proceed with the Payment transaction.</li><li>COMPLETED &ndash; The Payment request was initiated successfully using the Payment Handle.</li></ul>      |
 |usage                  |enum                       |This read-only attribute specifies how the Payment Handle will be used for Payments. Possible values are:<ul><li>SINGLE_USE &ndash; The Payment Handle can be used for one transaction only and expires if not used.</li><li>MULTI_USE &ndash; The Payment Handle can be used multiple times.</li></ul>|
 |paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible value is:<ul><li>NETELLER</li></ul>|
@@ -1119,7 +1119,7 @@ This is a read-only raw response returned by an acquirer.
 |amount                 |number<br/>`max=99999999999` |This is the amount of the request in minor units.<br/>**Note:** This field is mandatory if *transactionType* is included. <br/>The *amount* specified in the Payment Handle request must match the *amount* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. |
 |currencyCode           |string<br/>`length=3`      |This is the currency of the merchant account, for example, USD or CAD. See [Currency Codes](#currencycodes). <br/>The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Paysafe Payments API request the *paymentHandleToken* is used for.|
 |paymentHandleToken     |string                     |This read-only attribute is the payment token generated by Paysafe that will be used by merchants for the Paysafe Payments API requests.|
-|neteller               |[neteller] (#netellerobject)| These are details of the payment instrument used in the request. |
+|neteller               |[neteller](#netellerobject)| These are details of the payment instrument used in the request. |
 |billingDetails         |[billingDetails](#billingdetailsobject)         |These are billing details for the request.<br/>**Note:** For single-use payment handles, this address information will be ignored if the *paymentHandleTokenFrom* parameter is included and there is already address information associated with that customer.|
 |profile                |[profile](#profileobject)  |This is the customer's profile. |
 |link            |[link](#linkobject)         |These are links to which to redirect the customer, where applicable. |
@@ -1132,7 +1132,7 @@ This is a read-only raw response returned by an acquirer.
     "transactionType": "PAYMENT",
     "neteller": {
     "consumerId": "johndoe@email.com",
-     "detail1Description":"Details 1 description",
+     "deranail1Description":"Details 1 description",
       "detail1Text":"Details 1 text"  
 }    
     "paymentType": "NETELLER",
@@ -1146,7 +1146,7 @@ This is a read-only raw response returned by an acquirer.
         "city": "Bath",
         "zip": "BA1 2FJ",
         "country": "GB"
-    }, u.,ep4u ,f
+    },
     "link": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
@@ -1959,7 +1959,9 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         + `recipientDescription`:`url_alt_text` (string, optional) - This is a description to be shown on the NETELLER payment page.
             _length<=30_
         + `detail1Description`: `Details 1 description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
+           _length<=150_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
+           _length<=15_
 
 ## OriginalCreditResponse (object)
 + `id`:`25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., lookups.
