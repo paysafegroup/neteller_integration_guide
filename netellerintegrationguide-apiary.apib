@@ -266,7 +266,6 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |[billingAddress](#billingaddress)|object|conditional||Displays the billing address of the customer during the checkout. You should include this object for first-time customers with no customer profile. If the customer entity is created with the Paysafe Payments API, then address information from the *singleUseCustomerToken* is used and then you do not have to include the *billingAddress* object. <br>**Note:** If both addresses are included [*singleUseCustomerToken* & *billingAddress*], then Paysafe displays the address information from the billingAddress object.|
 |singleUseCustomerToken|string|no||The *singleUseCustomerToken* that you generate using the [Create a Single-Use Customer Token request](#createcustomersut). The Parameter displays any saved addresses and/or payment details in the Paysafe Checkout.|
 |canEditAmount|boolean|no||If *true*, the customer can edit the amount in the Paysafe Checkout before clicking Pay. The amount is not editable if the value is *false*.|
-|[customer](#customer)|object|no||You can choose to pass an existing customer profile in the call to create a Payment Handle for first-time customers having no customer profile.|
 |displayPaymentMethods|Array |no |Possible value is: NETELLER |If provided, this is a restricted list of payment methods that a customer sees.|
 |[paymentMethodDetails](#paymentmethoddetails)|object|yes||Required for NETELLER. |
 |payout |boolean |no | | If true, launches the **Withdrawal** Checkout. If false, launches the Paysafe Checkout.<br/> Defaults to false. |
@@ -283,15 +282,6 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |zip|string|yes|`length<=10`|The zip code of the address.|
 |country|string|yes|`length=2`|The country of the address. For example, GB. See [Country Codes](#countrycodes).|
 |state|string|yes|`length<=40`|The state of the address.|
-
-<a name="customer"></a>
-**customer**
-|Parameter|Type|Required|Validations|Description|
-|---------|-------|---------------|-----------|------------------|
-|firstName|string|yes|`length<=80`|The first name of the customer.|
-|lastName|string|yes|`length<=80`|The last name of the customer.|
-|[dateOfBirth](#dateofbirth)|object|yes||The date of birth of the customer.|
-|email|string|yes|`length<=255`|The email address of the customer.|
 
 <a name="dateofbirth"></a>
 **dateOfBirth**
@@ -320,6 +310,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. |
+|logourl                |string                 |The URL of the logo you want to show in the top right of the NETELLER page.|
 |recipientDescription   |string|no|`length<=30` |The description displayed on the NETELLER payment page.|
 |detail1Description     |string|no|`length<=150`|Displays additional details of the product.|
 |detail1Text            |string|no|`length<=15` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
@@ -388,8 +379,7 @@ A few additional parameters are important during the creation of a Payment Handl
 
 ### Action
 The *action* parameter is a read-only value that Paysafe returns in response to the Payment Handle creation request.
-The possible values are: 
-* NONE – Customer is not required to perform further action.
+The possible value is: 
 * REDIRECT –  The customer is required to authorize the payment on a redirected page. In this case, you must redirect the customer to a link that Paysafe returns in response to the Payment Handle creation request. Once the customer completes the authentication successfully, the *status* of the Payment Handle token is **PAYABLE**.
 
 ### Usage
@@ -573,7 +563,7 @@ Sample Response with List Data
   "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
   "amount": 1900,
   "merchantRefNum": "merchantRefNum-115",
-  "action": "NONE",
+  "action": "REDIRECT",
   "currencyCode": "GBP",
   "usage": "SINGLE_USE",
   "status": "EXPIRED",
@@ -593,6 +583,7 @@ Sample Response with List Data
   },
     "neteller": {
     "consumerId": "johndoe@email.com",
+    "logoUrl":"http://www.paysafe.com/icon.jpg",
     "detail1Description":"Details 1 description",
     "detail1Text":"Details 1 text"  
     },
@@ -617,22 +608,22 @@ Sample Response with List Data
 
 |Locale         |Code   |
 |---            |---    |
-|Danish         |da_DK  |
-|German         |de_DE     |
-|Greek          |el_GR     |
-|English        |en_US     |
-|Spanish        |es_ES  |
-|French         |fr_FR     |
-|Italian        |it_IT     |
-|Japanese       |ja_JP       |
-|Korean         |ko_KR     |
-|Norwegian      |no_NO     |
-|Polish         |pl_PL  |
-|Portuguese     |pt_PT     |
-|Russian        |ru_RU     |
-|Swedish        |sv_SE     |
-|Turkish        |tr_TR     |
-|Simplified Chinese     |zh_CN     |
+|Danish         |da-DK  |
+|German         |de-DE     |
+|Greek          |el-GR     |
+|English        |en-US     |
+|Spanish        |es-ES  |
+|French         |fr-FR     |
+|Italian        |it-IT     |
+|Japanese       |ja-JP       |
+|Korean         |ko-KR     |
+|Norwegian      |no-NO     |
+|Polish         |pl-PL  |
+|Portuguese     |pt-PT     |
+|Russian        |ru-RU     |
+|Swedish        |sv-SE     |
+|Turkish        |tr-TR     |
+|Simplified Chinese     |zh-CN     |
 
 <a name="currencycodes" title="Currency Codes"></a>
 ## Currency Codes
@@ -930,35 +921,6 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 | Zimbabwe                          | ZW |
 
 # Common Objects
-<a name="addressesobject" title="Addresses Object"></a>
-## addresses
-|Element            |Type                       |Description    |
-|---                |---                        |---       |
-|id                 |string<br/>`length<=36`    |This is the ID for the request.|
-|nickName           |string<br/>`length<=50`    |This is an alias defined by the customer for this address (for example, "home address").|
-|street             |string<br/>`length<=50`    |This is the first line of the customer's street address.|
-|street2            |string<br/>`length<=50`    |This is the second line of the customer's street address, if required (for example, apartment number).|
-|city               |string<br/>`length<=40`    |This is the city where the address is located.|
-|country            |string<br/>`length=2`      |This is the country where the address is located. See [Country Codes](#countrycodes).|
-|state              |string<br/>`length<=40`    |This is the state/province/region in which the customer lives. Other countries have no restrictions. |
-|zip                |string<br/>`length<=10`    |This is the zip, postal, or post code of the customer's address.|
-|phone              |string<br/>`length<=40`    |This is the phone number to contact the recipient at this address, if it is different from the phone number in the customer.|
-|status             |enum                       |This is the status of the address. Possible values are:<ul><li>ACTIVE</li><LI>INITIAL</li></ul>|
-|defaultShippingAddressIndicator|boolean        |Flag to mark this address as the default shipping address.|
-
-```apib
-            {
-              "nickName":"home",
-              "street":"George Street",
-              "street2":"3 Edgar Buildings",
-              "city":"Bath",
-              "country":"GB",
-              "state":"BA",
-              "zip":"BA1 2FJ",
-              "phone":"7911 123456'",
-              "defaultShippingAddressIndicator": true
-            }
-```
 
 <a name="billingdetailsobject" title="Billing Details Object"></a>
 ## billingDetails
@@ -986,40 +948,6 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
         "country": "GB"
     }
 }
-```
-
-
-<a name="customersobject" title="Customer Object"></a>
-## customer
-|Element            |Type                               |Description    |
-|---                |---                                |---            |
-|id                 |string <br/>`length<=36`           |This is the ID returned in the response.|
-|status             |enum                               |This is the status of the customer. Possible values are:<br/><ul><li>INITIAL</li><li>ACTIVE</li></ul><br/>By default the system automatically sets the customer status to an ACTIVE state. If you want to prevent the customer from being used for Payments, you can set the status to an INITIAL state (for example, in cases where you first want to validate the customer).|
-|merchantCustomerId |string <br/>`length<=100`          |This is a customer ID that you provide with the request for your own internal customer identification. This value must be unique for each customer.|
-|locale             |enum                               |The language that the NETELLER pages should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported. 
-|firstName          |string <br/>`length<=80`           |This is the customer’s first name. |
-|middleName         |string <br/>`length<=80`           |This is the customer’s middle name. |
-|lastName           |string <br/>`length<=80`           |This is the customer’s last name. |
-|dateOfBirth        |[dateOfBirth](#dateofbirthobject)  |This is the customer's date of birth.|
-|ip                 |string<br/>`length<=46`            |This is the customer’s IP address.|
-|gender             |enum                               |This is the customer’s gender. Possible values are:<ul><li>M (male)</li><li>F (female)</li></ul>
-|nationality        |string<br/>`length<=30`            |This is the customer’s nationality.|
-|email              |string<br/>`length<=255`           |This is the customer's email address.|
-|phone              |string<br/>`length<=40`            |This is the customer's phone number.|
-|cellPhone          |string<br/>`length<=40`            |This is the customer's cell phone number.|
-|paymentToken       |string<br/>`length<=50`            |This is a token generated by Paysafe that represents the customer and returned in the response to the customer request.|
-|addresses          |[addresses](#addressesobject)      |These are the addresses associated with this customer.|
-|paymentHandles     |[paymentHandles](#paymenthandleobject) |These are the payment handles associated with this customer.|
-
-```apib
-            {
-              "merchantCustomerId":"mycustomer1",
-              "locale" : "en_US",
-              "firstName" : "John",
-              "lastName" : "Smith",
-              "email" : "john.smith@somedomain.com",
-              "phone" : "713-444-5555"
-             }
 ```
 
 <a name="dateofbirthobject" title="Date of Birth Object"></a>
@@ -1087,13 +1015,15 @@ This is a read-only raw response returned by an acquirer.
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
+|logourl                |string                     |The URL of the logo you want to show in the top right of the NETELLER page.|
 |recipientDescription   |string<br/>`length<=30`    |The description to be shown on the NETELLER payment page.|
-|detail1Description     |string<br/>`length<=150`   |You can show additional details about the product. |
+|detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
 |detail1Text            |string<br/>`length<=15`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
 ```{   
     "neteller":{ 
       "consumerId":"neteller.account@example.org",
+      "logoUrl":"http://www.paysafe.com/icon.jpg",
       "detail1Description":"Details 1 description",
       "detail1Text":"Details 1 text"
    }
@@ -1114,10 +1044,10 @@ This is a read-only raw response returned by an acquirer.
 |status                 |enum                       |This read-only attribute is the status of the request. Possible values are:<ul><li>INITIATED &ndash; The request was initiated with the downstream provider.</li><li>PAYABLE &ndash; You can use the Payment Handle for a Payment request.</li><li>PROCESSING &ndash; The Payment Handle was authorized by customer, awaiting PSP response.</li><li>FAILED &ndash; The transaction failed due to either an error or being declined.</li><li>EXPIRED &ndash; The Payment Handle expired because you did not proceed with the Payment transaction.</li><li>COMPLETED &ndash; The Payment request was initiated successfully using the Payment Handle.</li></ul>      |
 |usage                  |enum                       |This read-only attribute specifies how the Payment Handle will be used for Payments. Possible values are:<ul><li>SINGLE_USE &ndash; The Payment Handle can be used for one transaction only and expires if not used.</li><li>MULTI_USE &ndash; The Payment Handle can be used multiple times.</li></ul>|
 |paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible value is:<ul><li>NETELLER</li></ul>|
-|action                 |enum                       |This read-only attribute specifies the next step of the customer journey once they proceed to the Payment. Possible values are:<ul><li>NONE &ndash; No action is required.</li><li>REDIRECT &ndash; The customer must be redirected in order to complete a Payment.</li></ul>|
+|action                 |enum                       |This read-only attribute specifies the next step of the customer journey once they proceed to the Payment. Possible value is:<ul><li>REDIRECT &ndash; The customer must be redirected in order to complete a Payment.</li></ul>|
 |executionMode          |enum                       |This read-only attribute specifies the action of the merchant server in order to complete the Payment. Possible value is:<ul><li>SYNCHRONOUS &ndash; The status of the Payment request will be returned synchronously to you.</li></ul>|
-|amount                 |number<br/>`max=99999999999` |This is the amount of the request in minor units.<br/>**Note:** This field is mandatory if *transactionType* is included. <br/>The *amount* specified in the Payment Handle request must match the *amount* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. |
-|currencyCode           |string<br/>`length=3`      |This is the currency of the merchant account, for example, USD or CAD. See [Currency Codes](#currencycodes). <br/>The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Paysafe Payments API request the *paymentHandleToken* is used for.|
+|amount                 |number<br/>`max=999999999` |This is the amount of the request in minor units.<br/>**Note:** This field is mandatory if *transactionType* is included. <br/>The *amount* specified in the Payment Handle request must match the *amount* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. |
+|currencyCode           |string<br/>`length=3`      |This is the currency of the merchant account, for example, USD or CAD. See [Currency Codes](#currencycodes). <br/>The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Paysafe Payments API request the *paymentHandleToken* is used for. This is a mandatory field.|
 |paymentHandleToken     |string                     |This read-only attribute is the payment token generated by Paysafe that will be used by merchants for the Paysafe Payments API requests.|
 |neteller               |[neteller](#netellerobject)| These are details of the payment instrument used in the request. |
 |billingDetails         |[billingDetails](#billingdetailsobject)         |These are billing details for the request.<br/>**Note:** For single-use payment handles, this address information will be ignored if the *paymentHandleTokenFrom* parameter is included and there is already address information associated with that customer.|
@@ -1132,8 +1062,9 @@ This is a read-only raw response returned by an acquirer.
     "transactionType": "PAYMENT",
     "neteller": {
     "consumerId": "johndoe@email.com",
-     "deranail1Description":"Details 1 description",
-      "detail1Text":"Details 1 text"  
+    "logoUrl":"http://www.paysafe.com/icon.jpg",
+    "deranail1Description":"Details 1 description",
+    "detail1Text":"Details 1 text"  
 }    
     "paymentType": "NETELLER",
     "amount": 190,
@@ -1163,7 +1094,7 @@ This is a read-only raw response returned by an acquirer.
 |---                |---                                    |---                                |
 |id                 |string <br/>`length<=36`               |This read-only attribute is the ID returned in the response. This ID can be used for future associated requests.|
 |merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
-|amount             |number<br/>`max=99999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Payment request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
+|amount             |number<br/>`max=999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Payment request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
 |dupCheck           |boolean                                |This validates that this request is not a duplicate. A request is considered a duplicate if the *merchantRefNum* has already been used in a previous request within the past 90 days.<br/>**Note:** This value defaults to *true*.|
 |settleWithAuth     |boolean                                |This indicates whether the request is an Authorization only (no Settlement), or a Purchase (Authorization and Settlement).<br/><ul><li>false &ndash; The request is not settled</li><li>true &ndash; The request is settled</li></ul><br/>**Note:** Defaults to *true*.|
 |paymentHandleToken |string<br/>`length<=36`                |This is the Payment Handle token that represents the payment instrument to be used in the Payment request. |
@@ -1173,7 +1104,7 @@ This is a read-only raw response returned by an acquirer.
 |description        |string<br/>`length<=255`               |This is a description of the transaction you provided.|
 |txnTime            |UTC formatted date                     |This read-only attribute is the date and time the request was processed. For example:<br/>2019-01-26T10:32:28Z|
 |status             |enum                                   |This read-only attribute is the status of the transaction request. Possible values are:<ul><li>RECEIVED &ndash; Our system has received the request and is waiting for the downstream processor’s response.</li><li>COMPLETED &ndash; The transaction has been completed.</li><li>HELD &ndash; The transaction has been placed on hold due to risk considerations.</li><li>FAILED &ndash; The transaction failed, due to either an error or being declined.</li><li>CANCELLED &ndash; The request has been fully voided (reversed).</li><li>PENDING &ndash; The request is pending.</li></ul>|
-|currencyCode       |string<br/>`length=3`                  |This is the currency of your account, for example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Payment request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
+|currencyCode       |string<br/>`length=3`                  |This is the currency of your account, for example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Payment request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken. This is a mandatory field.|
 |gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This read-only attribute is the read-only raw response returned by an acquirer. It is returned only if your account is configured accordingly.|
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |error              |[error](#errorobject)                  |This is a read-only attribute       |
@@ -1185,7 +1116,7 @@ This is a read-only raw response returned by an acquirer.
     "amount": 190,
     "currencyCode": "GBP",
     "dupCheck": true,
-    "settleWithAuth": false,
+    "settleWithAuth": true,
     "paymentHandleToken": "SCZJg09GWSv36NLB",
     "customerIp": "10.10.12.64",
     "description": "Gaming Request"
@@ -1273,7 +1204,7 @@ This is a read-only raw response returned by an acquirer.
 |amount             |number<br/>`max=99999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Standalone Credits request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
 |merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
 |paymentHandleToken |string                                 |This is the payment token generated by Paysafe that you can use for Standalone Credits request.|
-|currencyCode       |string<br/>`length=3`                  |This is the currency of your account. For example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Standalone Credits request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
+|currencyCode       |string<br/>`length=3`                  |This is the currency of your account and a mandatory field. For example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Standalone Credits request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |billingDetails     |[billingDetails](#billingdetailsobject)|These are the billing details for the request.|
 |customerIp         |string<br/>`length<=39`                |This is the customer's IP address.|
@@ -1318,6 +1249,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 "transactionType": "PAYMENT",
                 "neteller": {
                 "consumerId": "johndoe@email.com",
+                "logoUrl":"http://www.paysafe.com/icon.jpg",
                 "detail1Description":"Details 1 description",
                 "detail1Text":"Details 1 text"  
                 },
@@ -1389,6 +1321,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
+                "logoUrl":"http://www.paysafe.com/icon.jpg",
                 "detail1Description":"Details 1 description",
                 "detail1Text":"Details 1 text"  
                 },
@@ -1437,7 +1370,7 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
               "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
               "amount": 1900,
               "merchantRefNum": "merchantRefNum-115",
-              "action": "NONE",
+              "action": "REDIRECT",
               "currencyCode": "GBP",
               "usage": "SINGLE_USE",
               "status": "EXPIRED",
@@ -1457,6 +1390,7 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
+                "logoUrl":"http://www.paysafe.com/icon.jpg",
                 "detail1Description":"Details 1 description",
                 "detail1Text":"Details 1 text"  
                 },
@@ -1503,7 +1437,7 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
               "amount": 1900,
               "merchantRefNum": "merchantRefNum-115",
-              "action": "NONE",
+              "action": "REDIRECT",
               "currencyCode": "GBP",
               "usage": "SINGLE_USE",
               "status": "EXPIRED",
@@ -1523,6 +1457,7 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
+                "logoUrl":"http://www.paysafe.com/icon.jpg",
                 "detail1Description":"Details 1 description",
                 "detail1Text":"Details 1 text"  
                 },
@@ -1629,7 +1564,7 @@ Click on **Get Payments** above to see how to look up a Payment using the ID ret
               "id": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
               "amount": 1900,
               "merchantRefNum": "merchantRefNum-108",
-              "settleWithAuth": false,
+              "settleWithAuth": true,
               "paymentHandleToken": "SCZJg09GWSv36NLB",
               "txnTime": "2018-12-14T15:12:18Z",
               "customerIp": "10.10.12.64",
@@ -1679,7 +1614,7 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
                   "id": "8190c675-6d68-4cd7-a29c-55b406addaeb",
                   "amount": 1900,
                   "merchantRefNum": "merchantRefNum-145",
-                  "settleWithAuth": false,
+                  "settleWithAuth": true,
                   "paymentHandleToken": "SChfCGCURe5NiLIv",
                   "authCode": "107212",
                       "txnTime": "2018-12-14T15:12:18Z",
@@ -1764,7 +1699,7 @@ Click on **Get Standalone Credits** above to see how to look up Standalone Credi
               "id": "e075f2ae-dfc4-4f6d-8d89-61158367b6a6",
               "amount": 40,
               "merchantRefNum": "merchantRefNum-151",
-              "settleWithAuth": false,
+              "settleWithAuth": true,
               "paymentHandleToken": "SCZJg09GWSv36NLB",
               "txnTime": "2018-12-14T15:12:18Z",
               "customerIp": "10.10.12.64",
@@ -1824,32 +1759,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
             
 # Data Structures
 
-## Address
-+ `id`:`5d4db3bc-34c9-417f-a051-0d992ad9284e` (string) - This is the ID of request, returned in the response.
-    _Read Only, length<=36_
-+ nickName:`Home` (string) - This is an alias defined by the customer for this address (for example, "home address").
-    _length<=50_
-+ street:`100 Queen` (string, required) - This is the first line of the customer's street address. **Note:** This is required only when the address is to be used in association with a bank account.
-    _length<=50_
-+ street2:`Unit 201` (string) - This is the second line of the customer's street address, if required.
-    _length<=50_
-+ city:`Toronto` (string, required) - This is the city where the address is located. **Note:** This is required only when the address is to be used in association with a bank account.
-    _length<=40_
-+ zip:`M5H 2N2` (string, required) - This is the zip, postal, or post code of the customer's address.
-    _length<=10_
-+ country:`CA` (string, required) - This is the country where the address is located. See [Country Codes](#countrycodes).
-    _length=2_
-+ state:`ON` (string) - This is the state/province/region in which the customer lives.
-    _length<=40_
-+ phone:`647-788-3901` (string) - This is the customer's phone number.
-    _length<=40_
-+ defaultShippingAddressIndicator:`true` (boolean) - Flag to mark this address as the default shipping address.
-+ status: (enum) - This is the status of the address.
-    _Read Only_
-    + Members
-        + ACTIVE
-        + INITIAL
-
 ## Addresses
 + addresses (array)
     + (object)
@@ -1895,8 +1804,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _length<=50_
 
 ## Date of Birth
-+ `dateOfBirth` (object, required) - This is the customer's date of birth. 
-
++ `dateOfBirth` (object) - This is the customer's date of birth.
     + Properties
         + `day`:`29` (number, required) - This is the day of birth.
             _length=2_
@@ -1956,6 +1864,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Required for withdrawal request.
             _length<=50_
+        + `logourl`: `string` - The URL of the logo you want to show in the top right of the NETELLER page. 
         + `recipientDescription`:`url_alt_text` (string, optional) - This is a description to be shown on the NETELLER payment page.
             _length<=30_
         + `detail1Description`: `Details 1 description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
@@ -1972,7 +1881,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _length<=36_
 + `amount`:`1000` (string, required) - This is the amount of the request, in minor units. **Note:** The *amount* specified in the Standalone Credits request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
     _Max =99999999999_
-+ `currencyCode`:`CAD` (string, required) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** The *currencyCode* specified in the Standalone Credits request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
++ `currencyCode`:`CAD` (string, required) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** The *currencyCode* specified in the Standalone Credits request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken. This is a mandatory field.
     _max=3_
 + `dupCheck`:`true` (boolean) - This validates that this request is not a duplicate. A request is considered a duplicate if the merchantRefNum has already been used in a previous request within the past 90 days.
     + Default: true
@@ -2031,18 +1940,17 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Members
         + NETELLER
 + Include neteller
-+ `action`:`NONE` (enum) - This specifies the next step of the user journey once they proceed to the Payment.
++ `action`:`REDIRECT` (enum) - This specifies the next step of the user journey once they proceed to the Payment.
     _Read Only_
     + Members
-        + NONE - No action is required, e.g., for a standard credit card Payment.
         + REDIRECT -The user must be redirected in order to complete a Payment, e.g., when an alternate payment method like Paysafecard is used.
 + `executionMode`:`SYNCHRONOUS` (enum) - This specifies the action of the merchant server in order to complete the Payment.
     + Members
         + SYNCHRONOUS - The status of the Payment request will be returned synchronously to the merchant, e.g., a credit card request.
 + `amount`:`1000` (string) - This is the amount of the request, in minor units. **Note:** This field is mandatory if *transactionType* is included. The *amount* specified in the Payment Handle request must match the *amount* specified in the Payments API request the *paymentHandleToken* is used for.
     _Max =99999999999_
-+ `currencyCode`:`CAD` (string) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** This field is mandatory if *transactionType* is included. The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Payments API request the *paymentHandleToken* is used for.
-    _Read Only, max=3_
++ `currencyCode`:`CAD` (string) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** This field is mandatory if *transactionType* is included. The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Payments API request the *paymentHandleToken* is used for. This is a mandatory field.
+    _max=3_
 + `paymentHandleTokenFrom`:`SCyGZDlUuZ9zxjyd` (string) - This is an [existing Customer Payment Handle](#createcustomerpaymenthandlerequest), from which the payment instrument and profile details are retrieved. If this parameter is included you can omit the *billingDetails* object.
     _length<=36_
 + `paymentHandleToken`:`SCO3wKcIyLoQbQvw` (string) - This is the payment token generated by Paysafe that will be used by merchants for Payment API requests.
@@ -2072,8 +1980,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _Read Only_
         + Members
             + NETELLER
-    + currencyCode:`USD` (string) - This is the [currency of the merchant account](#currencycodes), for example, USD or CAD.
-        _Read Only, max=3_
+    + currencyCode:`USD` (string, required) - This is the [currency of the merchant account](#currencycodes), for example, USD or CAD.
+        _max=3_
     + `accountId`: `1009355920` (string) - This is the merchant account for which the payment method and currency are enabled.
         _Read Only, length<=10_
             
@@ -2089,7 +1997,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _max=99999999999_
 + `dupCheck`:`false` (boolean) - This validates that this request is not a duplicate. A request is considered a duplicate if the *merchantRefNum* has already been used in a previous request within the past 90 days.
     + Default: true
-+ `settleWithAuth`:`true` (boolean) - This indicates whether the request is an Authorization only (no Settlement) or a Purchase (Authorization and Settlement).
++ `settleWithAuth`:`true` (boolean) - This indicates whether the request is an Authorization only (no Settlement) or a Purchase (Authorization and Settlement). For NETELLER only 'true' is supported
     + Default: true
 + `paymentHandleToken`:`842778a0-03a2-11e9-8eb2-f2801f1b9fd1` (string, required) - This is the payment token generated by Paysafe that will be used for the Payment request.
     _length<=36_
@@ -2141,6 +2049,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + `gender`: (enum) - This is the customer’s gender.
         - F
         - M
+        - O
+        - N
     + `nationality`:`Indian` (string) - This is the customer’s nationality.
         _length<=30_
 
