@@ -88,10 +88,13 @@ You need to pass a callback function as part of the setup options to receive the
 3. The callback should use AJAX to send the Payment Handle representing the customer's payment details to your (merchant) server to [make a payment](#paymentrequest) using the Paysafe Payments API.
 
 ## Including the SDK 
-The SDK is located here: `https://hosted.paysafe.com/checkout/v2/paysafe.checkout.min.js`
+The SDK is located here:
+* Test:`https://hosted.test.paysafe.com/checkout/v2/paysafe.checkout.min.js`
+* Live:`https://hosted.paysafe.com/checkout/v2/paysafe.checkout.min.js`
+
 You need to include it in your HTML form by adding a `<script>` element in either the header or body.
 <head>
-    <script src="https://hosted.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
+    <script src="https://hosted.test.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
 </head>
 
 ## Example Payment Form
@@ -100,7 +103,7 @@ The following code sample shows a minimal Paysafe Checkout example for NETELLER 
 ```html
 <html>
     <head>
-        <script src="https://hosted.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
+        <script src="https://hosted.test.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
     </head>
 
     <body>
@@ -168,7 +171,7 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example fo
 ```html
 <html>
     <head>
-        <script src="https://hosted.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
+        <script src="https://hosted.test.paysafe.com/checkout/v2/paysafe.checkout.min.js"></script>
     </head>
 
  
@@ -311,7 +314,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. |
 |detail1Description     |string|no|`length<=15`|Displays additional details of the product.|
-|detail1Text            |string|no|`length<=15` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
+|detail1Text            |string|no|`length<=150` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
 The Paysafe Checkout is displayed when the configuration provided in *options* is correctly validated.
 <a name="resultcallback"></a>
@@ -581,7 +584,7 @@ Sample Response with List Data
   },
     "neteller": {
     "consumerId": "johndoe@email.com",
-    "detail1Description":"Details 1 description",
+    "detail1Description":"description",
     "detail1Text":"Details 1 text"  
     },
   "link": [{
@@ -1013,12 +1016,12 @@ This is a read-only raw response returned by an acquirer.
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
 |detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
-|detail1Text            |string<br/>`length<=15`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
+|detail1Text            |string<br/>`length<=150`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
 ```{   
     "neteller":{ 
       "consumerId":"neteller.account@example.org",
-      "detail1Description":"Details 1 description",
+      "detail1Description":"description",
       "detail1Text":"Details 1 text"
    }
 }
@@ -1056,7 +1059,7 @@ This is a read-only raw response returned by an acquirer.
     "transactionType": "PAYMENT",
     "neteller": {
     "consumerId": "johndoe@email.com",
-    "deranail1Description":"Details 1 description",
+    "detail1Description":"description",
     "detail1Text":"Details 1 text"  
 }    
     "paymentType": "NETELLER",
@@ -1234,6 +1237,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
             
     + Body
 
@@ -1242,7 +1246,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 "transactionType": "PAYMENT",
                 "neteller": {
                 "consumerId": "johndoe@email.com",
-                "detail1Description":"Details 1 description",
+                "detail1Description":"description",
                 "detail1Text":"Details 1 text"  
                 },
                 "paymentType": "NETELLER",
@@ -1313,7 +1317,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
-                "detail1Description":"Details 1 description",
+                "detail1Description":"description",
                 "detail1Text":"Details 1 text"  
                 },
                 "link": [{
@@ -1381,7 +1385,7 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
-                "detail1Description":"Details 1 description",
+                "detail1Description":"description",
                 "detail1Text":"Details 1 text"  
                 },
               "link": [{
@@ -1447,7 +1451,7 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               },
                 "neteller": {
                 "consumerId": "johndoe@email.com",
-                "detail1Description":"Details 1 description",
+                "detail1Description":"description",
                 "detail1Text":"Details 1 text"  
                 },
               "link": [{
@@ -1853,10 +1857,10 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Required for withdrawal request.
             _length<=50_
-        + `detail1Description`: `Details 1 description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
+        + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
-           _length<=15_
+           _length<=150_
 
 ## OriginalCreditResponse (object)
 + `id`:`25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., lookups.
