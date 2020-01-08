@@ -128,7 +128,6 @@ The following code sample shows a minimal Paysafe Checkout example for NETELLER 
                     }
                 },
                 "billingAddress": {
-                    "nickName": "John Dee",
                     "street": "George Street",
                     "street2": "3 Edgar Buildings",
                     "city": "Bath",
@@ -197,7 +196,6 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example fo
                     }
                 },
                 "billingAddress": {
-                    "nickName": "John Dee",
                     "street": "George Street",
                     "street2": "3 Edgar Buildings",
                     "city": "Bath",
@@ -262,7 +260,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |currency|string|yes|`length=3`<br/>`Regex:[A-Z]`|The [currency of the merchant account](#currencycodes). For example, USD or CAD.|
-|merchantRefNum|string|yes|`length<=255`|A unique identifier provided for every transaction from the Paysafe Checkout. |
+|merchantRefNum|string|yes|`length<=50`|A unique identifier provided for every transaction from the Paysafe Checkout. |
 |amount|number|no|`length=1-9`|The payment amount in minor units to process a transaction. Use the correct minor units amount for the currency passed to options. For example, the value should be 1099 to process US $10.99. The value should be 1000 to process 1000 Japanese yen. To process 10.139 Tunisian dinars, the value should be 10139. You can choose not to pass an amount when the Paysafe Checkout is loaded. In that case, the canEditAmount parameter must be true. However, before clicking Pay, the customer must enter the desired amount in the Paysafe Checkout.|
 |environment|string|no|Possible values are: LIVE or TEST|The environment used for making the API calls and loading the Paysafe Checkout. The default value is LIVE, if not specified.|
 |locale|string|no||The language that the NETELLER pages should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported.|
@@ -278,7 +276,6 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 **billingAddress**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|nickName|string|no|`length<=50`|An identifier to specify the type of address. For example, Work or Home.|
 |street|string|yes|`length<=50`|The first line of the address.|
 |street2|string|no|`length<=50`|The second line of the address.|
 |city|string|yes|`length<=40`|The city name of the address.|
@@ -312,7 +309,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 **neteller**
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
-|consumerId             |string|yes|`length<=50`|The email address of the customer who is making or receiving the payment. |
+|consumerId             |string|yes|`length<=150|The email address of the customer who is making or receiving the payment. |
 |detail1Description     |string|no|`length<=15`|Displays additional details of the product.|
 |detail1Text            |string|no|`length<=150` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -382,6 +379,7 @@ A few additional parameters are important during the creation of a Payment Handl
 The *action* parameter is a read-only value that Paysafe returns in response to the Payment Handle creation request.
 The possible value is: 
 * REDIRECT –  The customer is required to authorize the payment on a redirected page. In this case, you must redirect the customer to a link that Paysafe returns in response to the Payment Handle creation request. Once the customer completes the authentication successfully, the *status* of the Payment Handle token is **PAYABLE**.
+* NONE - No further action is required from the customer. 
 
 ### Usage
 The *usage* parameter is a read-only value that Paysafe returns in response to the Payment Handle creation request that specifies whether the Payment Handle token (*paymentHandleToken*) can be used once or multiple times. 
@@ -539,6 +537,7 @@ You must not include characters from the following table as values in your reque
 | [               | 5B        | Opening bracket                    |
 | ]               | 5D        | Closing bracket                    |
 | \               | 5C        | Backslash                          |
+|
 
 <a name="pagination" title="Pagination"></a>
 # Pagination
@@ -575,7 +574,6 @@ Sample Response with List Data
   "customerIp": "172.0.0.1",
   "paymentHandleToken": "SC0YsGIIgFksiOsQ",
   "billingDetails": {
-    "nickName": "Home",
      "street": "George Street",
      "street2": "3 Edgar Buildings",
      "city": "Bath",
@@ -590,12 +588,10 @@ Sample Response with List Data
   "link": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
-            "method": "GET"
         },
         {
             "rel": "on_failed",
             "href": "https://US_commerce_site/payment/return/failed",
-            "method": "GET"
         }
     ]}
 }
@@ -928,7 +924,6 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 |Element            |Type                       |Description                        |
 |---                |---                        |---       |
 |id                 |string<br/>`length<=36`    |This is the ID of the billing address, returned in the response. |
-|nickName           |string<br/>`length<=50`    |This is the nickname you gave for the billing address. |
 |street             |string<br/>`length<=50`    |This is the first line of the customer's street address.|
 |street2            |string<br/>`length<=50`    |This is the second line of the customer's street address, if required (for example, apartment number).|
 |city               |string<br/>`length<=40`    |This is the city where the address is located.|
@@ -939,7 +934,6 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 ```apib
 {
     "billingDetails": {
-        "nickName": "home",
         "street": "George Street",
         "street2": "3 Edgar Buildings",
         "city": "Bath",
@@ -1014,7 +1008,7 @@ This is a read-only raw response returned by an acquirer.
 
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
-|consumerId             |string<br/>`length<=50`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
+|consumerId             |string<br/>`length<=150`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
 |detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
 |detail1Text            |string<br/>`length<=150`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -1036,7 +1030,7 @@ This is a read-only raw response returned by an acquirer.
 |id                     |string<br/>`length<=32`    |This read-only attribute is the ID returned in the response. It can be used to retrieve the paymentHandle.|
 |accountId              |string<br/>`length<=10`    |This is the merchant account number used for the request. Include this parameter if you have more than one merchant account for the currency/payment type combination you are specifying. |
 |paymentHandleTokenFrom |string<br/>`length<=36`    |This is an existing paymentHandle ID created for a customer, from which the payment instrument and profile details are retrieved. |
-|merchantRefNum         |string<br/>`length<=255`   |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request. |
+|merchantRefNum         |string<br/>`length<=50`   |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request. |
 |transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDITS</li></ul>|
 |status                 |enum                       |This read-only attribute is the status of the request. Possible values are:<ul><li>INITIATED &ndash; The request was initiated with the downstream provider.</li><li>PAYABLE &ndash; You can use the Payment Handle for a Payment request.</li><li>PROCESSING &ndash; The Payment Handle was authorized by customer, awaiting PSP response.</li><li>FAILED &ndash; The transaction failed due to either an error or being declined.</li><li>EXPIRED &ndash; The Payment Handle expired because you did not proceed with the Payment transaction.</li><li>COMPLETED &ndash; The Payment request was initiated successfully using the Payment Handle.</li></ul>      |
 |usage                  |enum                       |This read-only attribute specifies how the Payment Handle will be used for Payments. Possible values are:<ul><li>SINGLE_USE &ndash; The Payment Handle can be used for one transaction only and expires if not used.</li><li>MULTI_USE &ndash; The Payment Handle can be used multiple times.</li></ul>|
@@ -1067,7 +1061,6 @@ This is a read-only raw response returned by an acquirer.
     "currencyCode": "GBP",
     "customerIp": "172.0.0.1",
     "billingDetails": {
-        "nickName": "Home",
         "street": "George Street",
         "street2": "3 Edgar Buildings",
         "city": "Bath",
@@ -1077,7 +1070,6 @@ This is a read-only raw response returned by an acquirer.
     "link": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
-            "method": "GET"
         },
     ]
 }
@@ -1089,7 +1081,7 @@ This is a read-only raw response returned by an acquirer.
 |Element            |Type                                   |Description                        |
 |---                |---                                    |---                                |
 |id                 |string <br/>`length<=36`               |This read-only attribute is the ID returned in the response. This ID can be used for future associated requests.|
-|merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
+|merchantRefNum     |string <br/>`length<=50`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
 |amount             |number<br/>`max=999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Payment request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
 |dupCheck           |boolean                                |This validates that this request is not a duplicate. A request is considered a duplicate if the *merchantRefNum* has already been used in a previous request within the past 90 days.<br/>**Note:** This value defaults to *true*.|
 |settleWithAuth     |boolean                                |This indicates whether the request is an Authorization only (no Settlement), or a Purchase (Authorization and Settlement).<br/><ul><li>false &ndash; The request is not settled</li><li>true &ndash; The request is settled</li></ul><br/>**Note:** Defaults to *true*.|
@@ -1157,12 +1149,10 @@ This is a read-only raw response returned by an acquirer.
     "link": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
-            "method": "GET"
         },
         {
             "rel": "on_failed",
             "href": "https://US_commerce_site/payment/return/failed",
-            "method": "GET"
         }
     ]
 }
@@ -1173,7 +1163,7 @@ This is a read-only raw response returned by an acquirer.
 |Element            |Type                                   |Description                        |
 |---                |---                                    |---                                |
 |id                 |string <br/>`length<=36`               |This is the ID returned in the response. You can use this ID for future associated requests.|
-|merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
+|merchantRefNum     |string <br/>`length<=50`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
 |amount             |number<br/>`max=999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. |
 |dupCheck           |boolean                                |This performs duplicate request checking. A request is considered a duplicate if the *merchantRefNum* is already used in a previous request within the past 90 days.<br/>**Note:** This value defaults to *true*.|
 |availableToRefund  |number<br/>`max=999999999`           |This is the amount of Settlement that is available for Refund, in minor units. For example, US $10.99 would be 1099.|
@@ -1198,7 +1188,7 @@ This is a read-only raw response returned by an acquirer.
 |---                |---                                    |---                                |
 |id                 |string <br/>`length<=36`               |This read-only attribute is the ID returned in the response. You can use this ID for future associated requests.|
 |amount             |number<br/>`max=999999999`           |This is the amount of the request, in minor units. For example, to process US $10.99, this value should be 1099. <br/>**Note:** The *amount* specified in the Standalone Credits request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
-|merchantRefNum     |string <br/>`length<=255`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
+|merchantRefNum     |string <br/>`length<=50`              |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.|
 |paymentHandleToken |string                                 |This is the payment token generated by Paysafe that you can use for Standalone Credits request.|
 |currencyCode       |string<br/>`length=3`                  |This is the currency of your account and a mandatory field. For example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Standalone Credits request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken.|
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
@@ -1254,27 +1244,23 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 "currencyCode": "USD",
                 "customerIp": "172.0.0.1",
                 "billingDetails": {
-                    "nickName": "Home",
                     "street": "George Street",
                     "street2": "3 Edgar Buildings",
                     "city": "Bath",
                     "zip": "BA1 2FJ",
                     "country": "GB"
                 },
-                "link": [{
+                "return link": [{
                         "rel": "on_completed",
                         "href": "https://usgaminggambling.com/payment/return/success",
-                        "method": "GET"
                     },
                     {
                         "rel": "on_failed",
                         "href": "https://usgaminggambling.com/payment/return/failed",
-                        "method": "GET"
                     },
                     {
                         "rel": "default",
                         "href": "https://usgaminggambling.com/payment/",
-                        "method": "GET"
                     }
                 ]
             }
@@ -1298,7 +1284,6 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 "executionMode": "SYNCHRONOUS",
                 "amount": 500,
                 "billingDetails": {
-                   "nickName": "Home",
                     "street": "George Street",
                     "street2": "3 Edgar Buildings",
                     "city": "Bath",
@@ -1376,7 +1361,6 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
               "customerIp": "172.0.0.1",
               "paymentHandleToken": "SC0YsGIIgFksiOsQ",
               "billingDetails": {
-                "nickName": "Home",
                 "street": "George Street",
                 "street2": "3 Edgar Buildings",
                 "city": "Bath",
@@ -1391,12 +1375,10 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
               "link": [{
                         "rel": "on_completed",
                         "href": "https://US_commerce_site/payment/return/success",
-                        "method": "GET"
                     },
                     {
                         "rel": "on_failed",
                         "href": "https://US_commerce_site/payment/return/failed",
-                        "method": "GET"
                     }
                 ]
             }
@@ -1442,7 +1424,6 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               "customerIp": "172.0.0.1",
               "paymentHandleToken": "SC0YsGIIgFksiOsQ",
               "billingDetails": {
-                "nickName": "Home",
                  "street": "George Street",
                  "street2": "3 Edgar Buildings",
                  "city": "Bath",
@@ -1457,12 +1438,10 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
               "link": [{
                         "rel": "on_completed",
                         "href": "https://US_commerce_site/payment/return/success",
-                        "method": "GET"
                     },
                     {
                         "rel": "on_failed",
                         "href": "https://US_commerce_site/payment/return/failed",
-                        "method": "GET"
                     }
                 ]}
             }
@@ -1758,8 +1737,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         + Properties
             + `id`:`5d4db3bc-34c9-417f-a051-0d992ad9284e` (string) - This is the ID of request, returned in the response.
                 _Read Only, length<=36_
-            + nickName:`Home` (string) - This is an alias defined by the customer for this address (for example, "home address").
-                _length<=50_
             + street:`George Street` (string, required) - This is the first line of the customer's street address. **Note:** This is required only when the address is to be used in association with a bank account.
                 _length<=50_
             + street2:`3 Edgar Buildings` (string) - This is the second line of the customer's street address, if required.
@@ -1793,8 +1770,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _length<=40_
     + phone:`444-9999` (string) - This is the customer's telephone number.
         _length<=40_
-    + `nickName`:`Home` (string) - This is the nickname you have for the billing address.
-        _length<=50_
+    
 
 ## Date of Birth
 + `dateOfBirth` (object) - This is the customer's date of birth.
@@ -1856,7 +1832,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Required for withdrawal request.
-            _length<=50_
+            _length<=150_
         + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
@@ -1866,7 +1842,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `id`:`25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., lookups.
     _Read Only, length<=36_
 + `merchantRefNum`:`merchantRefNum-101` (string, required) - This is the merchant reference number created by the merchant and submitted as part of the request. It must be unique for each request.
-    _length<=255_
+    _length<=50_
 + `paymentHandleToken`:`842778a0-03a2-11e9-8eb2-f2801f1b9fd1` (string, required) - This is the payment token generated by Paysafe that will be used for the request.
     _length<=36_
 + `amount`:`1000` (string, required) - This is the amount of the request, in minor units. **Note:** The *amount* specified in the Standalone Credits request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
@@ -1906,7 +1882,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `id`:`26359efd-7cfb-4014-a13d-1724e3ff17fa` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e.g., to look up the Payment Handle. 
     _Read Only, length<=36_
 + `merchantRefNum`:`merchantRefNum-101` (string, required) - This is the merchant reference number created by the merchant and submitted as part of the request. It must be unique for each request.
-    _length<=255_
+    _length<=50_
 + `transactionType`: (enum, required) - This specifies the transaction type for which the Payment Handle is created.
     + Members
         + PAYMENT - Payment Handle is created to continue the Payment.
@@ -1957,7 +1933,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + links (object) - This is an array of links related to the resource.
     + `rel`: `redirect_payment` (enum)
     + `href`:`http://api.paysafe.com/card/redirect/372b5ee7-6360-4403-b444-164f8f1d2709`
-    + `method`:`GET`
+    
 + `customerIp`:`111.111.111.111` (string) - This is the customer's IP address.
     _length<=39_
 + `timeToLiveSeconds`:`899` (number) - This is the period of time, in seconds, the *paymentHandleToken* is valid before expiration. 
@@ -1982,7 +1958,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `id`:`3aeb9c63-6386-46a3-9f8e-f452e722228a` (string) - This is the ID returned in the response. This ID can be used for future associated requests, for example, looking up the Payment. 
     _Read Only, length<=36_
 + `merchantRefNum`:`merchantRefNum-101` (string, required) - This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request.
-    _length<=255_
+    _length<=50_
 + `amount`:`1000` (number, required) - This is the amount of the request, in minor units. **Note:** The *amount* specified in the Payment request must match the *amount* specified in the Payment Handle request from which the *paymentHandleToken* is taken.
     _max=999999999_
 + `dupCheck`:`false` (boolean) - This validates that this request is not a duplicate. A request is considered a duplicate if the *merchantRefNum* has already been used in a previous request within the past 90 days.
@@ -2060,7 +2036,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `id`: `25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., Refunds.
     _Read Only, length<=36_
 + `merchantRefNum`: `P1234` (string, required) - This is the merchant reference number created by you and submitted as part of the request.
-    _length<=255_
+    _length<=50_
 + `amount`: `100` (number) - This is the amount of the request, in minor units. If this value is not provided, the full remaining amount on the Authorization will be settled. 
     _max=999999999_
 + `dupCheck`: `true` (boolean) - This validates that this request is not a duplicate. A request is considered a duplicate if the merchantRefNum has already been used in a previous request within the past 90 days.
