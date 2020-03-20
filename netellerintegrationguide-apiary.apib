@@ -1409,42 +1409,71 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
     + Body
 
             {
-              "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-115",
-              "action": "REDIRECT",
-              "currencyCode": "GBP",
-              "usage": "SINGLE_USE",
-              "status": "EXPIRED",
-              "timeToLiveSeconds": 0,
-              "transactionType": "PAYMENT",
-              "paymentType": "NETELLER",
-              "executionMode": "SYNCHRONOUS",
-              "customerIp": "172.0.0.1",
-              "paymentHandleToken": "SC0YsGIIgFksiOsQ",
-              "billingDetails": {
-                "street": "George Street",
-                "street2": "3 Edgar Buildings",
-                "city": "Bath",
-                "zip": "BA1 2FJ",
-                "country": "GB"
-              },
-                "neteller": {
-                "consumerId": "johndoe@email.com",
-                "detail1Description":"description",
-                "detail1Text":"Details 1 text"  
+            "id": "037490af-89ee-4794-9022-f7b91a6ddaac",
+            "paymentType": "NETELLER",
+            "paymentHandleToken": "PHi2MeARP5OxuXIm",
+            "merchantRefNum": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+            "currencyCode": "USD",
+            "txnTime": "2020-03-19T06:38:07.000+0000",
+            "billingDetails": {
+                "street": "100 Queen",
+                "street2": "Unit 201",
+                "city": "Toronto",
+                "zip": "M5H 2N2",
+                "country": "CA"
+            },
+            "customerIp": "172.0.0.1",
+            "status": "INITIATED",
+            "links": [
+                {
+                    "rel": "redirect_payment",
+                    "href": "https://api.qa.paysafe.com/alternatepayments/v1/redirect?accountId=1011872745&paymentHandleId=037490af-89ee-4794-9022-f7b91a6ddaac&token=eyJhbGciOiJIUzI1NiJ9.eyJhY2QiOiIxMDExODcyNzQ1IiwicHlkIjoiMDM3NDkwYWYtODllZS00Nzk0LTkwMjItZjdiOTFhNmRkYWFjIiwiZXhwIjoxNTg0NjAxNjg4fQ.e-C3wR7Z3sqBLp0-lS4ksZNsKvs4jV-J_kLphB4N5aM"
+                }
+            ],
+            "liveMode": false,
+            "usage": "SINGLE_USE",
+            "action": "REDIRECT",
+            "executionMode": "SYNCHRONOUS",
+            "amount": 100,
+            "merchantDescriptor": {
+                "dynamicDescriptor": "OnlineStore",
+                "phone": "12345678"
+            },
+            "timeToLiveSeconds": 899,
+            "gatewayResponse": {
+                "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                "totalAmount": "100",
+                "currency": "USD",
+                "lang": "en_US",
+                "status": "pending",
+                "processor": "NETELLER"
+            },
+            "returnLinks": [
+                {
+                    "rel": "on_completed",
+                    "href": "https://usgaminggamblig.com/payment/return/completed"
                 },
-              "returnLinks": [{
-                        "rel": "on_completed",
-                        "href": "https://US_commerce_site/payment/return/success"
-                    },
-                    {
-                        "rel": "on_failed",
-                        "href": "https://US_commerce_site/payment/return/failed"
-                    }
-                ]
+                {
+                    "rel": "on_cancelled",
+                    "href": "https://usgaminggamblig.com/payment/return/cancelled"
+                },
+                {
+                    "rel": "on_failed",
+                    "href": "https://usgaminggamblig.com/payment/return/failed"
+                },
+                {
+                    "rel": "default",
+                    "href": "https://usgaminggamblig.com/payment/return/success"
+                }
+            ],
+            "transactionType": "PAYMENT",
+            "updatedTime": "2020-03-19T06:38:08Z",
+            "statusTime": "2020-03-19T06:38:08Z",
+            "neteller": {
+                "consumerId": "neteller.account@example.org",
+                "consumerIdLocked": true
             }
-
+            }
 
 ## Get Payment Handle Using Merchant Reference Number [GET /v1/paymenthandles?merchantRefNum={merchantRefNum}]
 <a name="getpaymenthandlemerchantrefnum" title="Look Up a Payment Handle Using a Merchant Reference Number"></a>
@@ -1467,46 +1496,79 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
     + Body
 
             {
-                "meta": {
-                    "numberOfRecords": 1,
-                    "limit": 10,
-                    "page": 1
+            "meta": {
+                "numberOfRecords": 1,
+                "limit": 10,
+                "page": 1
+            },
+            "paymentHandles": [
+                {
+                "id": "037490af-89ee-4794-9022-f7b91a6ddaac",
+                "merchantRefNum": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "status": "INITIATED",
+                "paymentType": "NETELLER",
+                "liveMode": false,
+                "usage": "SINGLE_USE",
+                "action": "REDIRECT",
+                "executionMode": "SYNCHRONOUS",
+                "amount": 100,
+                "currencyCode": "USD",
+                "merchantDescriptor": {
+                    "dynamicDescriptor": "OnlineStore",
+                    "phone": "12345678"
                 },
-              "paymentHandles":[{
-              "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-115",
-              "action": "REDIRECT",
-              "currencyCode": "GBP",
-              "usage": "SINGLE_USE",
-              "status": "EXPIRED",
-              "timeToLiveSeconds": 0,
-              "transactionType": "PAYMENT",
-              "paymentType": "NETELLER",
-              "executionMode": "SYNCHRONOUS",
-              "customerIp": "172.0.0.1",
-              "paymentHandleToken": "SC0YsGIIgFksiOsQ",
-              "billingDetails": {
-                 "street": "George Street",
-                 "street2": "3 Edgar Buildings",
-                 "city": "Bath",
-                 "zip": "BA1 2FJ",
-                 "country": "GB"
-              },
-                "neteller": {
-                "consumerId": "johndoe@email.com",
-                "detail1Description":"description",
-                "detail1Text":"Details 1 text"  
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "zip": "M5H 2N2",
+                    "city": "Toronto",
+                    "country": "CA"
                 },
-              "returnLinks": [{
-                        "rel": "on_completed",
-                        "href": "https://US_commerce_site/payment/return/success"
+                "customerIp": "172.0.0.1",
+                "timeToLiveSeconds": 645,
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
+                    "lang": "en_US",
+                    "status": "pending",
+                    "processor": "NETELLER"
+                },
+                "returnLinks": [
+                    {
+                        "rel": "default",
+                        "href": "https://usgaminggamblig.com/payment/return/success"
+                    },
+                    {
+                        "rel": "on_cancelled",
+                        "href": "https://usgaminggamblig.com/payment/return/cancelled"
                     },
                     {
                         "rel": "on_failed",
-                        "href": "https://US_commerce_site/payment/return/failed"
+                        "href": "https://usgaminggamblig.com/payment/return/failed"
+                    },
+                    {
+                        "rel": "on_completed",
+                        "href": "https://usgaminggamblig.com/payment/return/completed"
                     }
-                ]}
+                ],
+                "transactionType": "PAYMENT",
+                "txnTime": "2020-03-19T06:38:07Z",
+                "updatedTime": "2020-03-19T06:38:08Z",
+                "statusTime": "2020-03-19T06:38:08Z",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "https://api.qa.paysafe.com/alternatepayments/v1/accounts/1011872745/paymenthandles/037490af-89ee-4794-9022-f7b91a6ddaac"
+                    }
+                ],
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                }
+            }
+            ]
             }
 
 # Group Payments
@@ -1548,31 +1610,54 @@ Click on **Process Payments** above to see how to create a Payment request using
     + Body
 
             {
-              "id": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-108",
-              "settleWithAuth": true,
-              "paymentHandleToken": "SCZJg09GWSv36NLB",
-              "txnTime": "2018-12-14T15:12:18Z",
-              "customerIp": "10.10.12.64",
-              "dupCheck": true,
-              "description": "Magazine subscription",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "COMPLETED",
-              "availableToSettle": 0,
-              "gatewayResponse": {
-                  "orderId": "ORD_0d676b4b-0eb8-4d78-af25-e41ab431e325",
-                    "totalAmount": 3599,
-                    "currency": "EUR",
-                    "status": "pending",
-                    "lang": "en_US",
-                    "processor": "NETELLER"
-                }
+            "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+            "paymentType": "NETELLER",
+            "paymentHandleToken": "PHi2MeARP5OxuXIm",
+            "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+            "currencyCode": "USD",
+            "settleWithAuth": true,
+            "txnTime": "2020-03-19T06:38:07.000+0000",
+            "billingDetails": {
+                "street1": "100 Queen",
+                "street2": "Unit 201",
+                "city": "Toronto",
+                "zip": "M5H 2N2",
+                "country": "CA"
+            },
+            "status": "COMPLETED",
+            "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+            "amount": 100,
+            "consumerIp": "172.0.0.1",
+            "liveMode": false,
+            "updatedTime": "2020-03-19T06:44:22Z",
+            "statusTime": "2020-03-19T06:44:22Z",
+            "gatewayResponse": {
+                "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                "totalAmount": "100",
+                "currency": "USD",
+                "lang": "en_US",
+                "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                "verificationLevel": "10",
+                "transactionId": "127934948749341",
+                "transactionType": "Member to Merchant Transfer (Order)",
+                "description": "neteller.account@example.org to Neteller Simulator Test",
+                "status": "paid",
+                "processor": "NETELLER"
+            },
+            "availableToSettle": 0,
+            "neteller": {
+                "consumerId": "neteller.account@example.org",
+                "consumerIdLocked": true
+            },
+            "settlements": {
+                "amount": 100,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                "status": "COMPLETED"
             }
-
-
-
+            }
+ 
 ## Get Payments [GET /v1/payments/{paymentId}]
 <a name="getpayment" title="Look Up a Payment"></a>
 
@@ -1594,29 +1679,47 @@ Click on **Get Payments** above to see how to look up a Payment using the ID ret
     + Body
 
             {
-              "id": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-108",
-              "settleWithAuth": true,
-              "paymentHandleToken": "SCZJg09GWSv36NLB",
-              "txnTime": "2018-12-14T15:12:18Z",
-              "customerIp": "10.10.12.64",
-              "dupCheck": true,
-              "description": "Magazine subscription",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "COMPLETED",
-              "availableToSettle": 1900,
-              "gatewayResponse": {
-                 "orderId": "ORD_0d676b4b-0eb8-4d78-af25-e41ab431e325",
-                    "totalAmount": 3599,
-                    "currency": "EUR",
-                    "status": "pending",
+                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "currencyCode": "USD",
+                "settleWithAuth": true,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "COMPLETED",
+                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "amount": 100,
+                "consumerIp": "172.0.0.1",
+                "liveMode": false,
+                "updatedTime": "2020-03-19T06:44:22Z",
+                "statusTime": "2020-03-19T06:44:22Z",
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
                     "lang": "en_US",
+                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                    "verificationLevel": "10",
+                    "transactionId": "127934948749341",
+                    "transactionType": "Member to Merchant Transfer (Order)",
+                    "description": "neteller.account@example.org to Neteller Simulator Test",
+                    "status": "paid",
                     "processor": "NETELLER"
+                },
+                "availableToSettle": 0,
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                }
             }
-            }
-            
+
 ## Get Payments Using Merchant Reference number [GET /v1/payments?merchantRefNum={merchantRefNum}]
 <a name="getpaymentmerchantrefnum" title="Look Up a Payment Using a Merchant Reference Number"></a>
 
@@ -1638,30 +1741,45 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
     + Body
 
             {
-              "meta": {
-                    "numberOfRecords": 1,
-                    "limit": 10,
-                    "page": 1
+                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "currencyCode": "USD",
+                "settleWithAuth": true,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
                 },
-              "payments": [
-                {
-                  "id": "8190c675-6d68-4cd7-a29c-55b406addaeb",
-                  "amount": 1900,
-                  "merchantRefNum": "merchantRefNum-145",
-                  "settleWithAuth": true,
-                  "paymentHandleToken": "SChfCGCURe5NiLIv",
-                  "authCode": "107212",
-                      "txnTime": "2018-12-14T15:12:18Z",
-                  "customerIp": "10.10.12.64",
-                  "description": "Magazine subscription",
-                  "currencyCode": "GBP",
-                  "paymentType": "NETELLER",
-                  "status": "COMPLETED",
-                  "avsResponse": "MATCH",
-                
-                  "availableToSettle": 40
+                "status": "COMPLETED",
+                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "amount": 100,
+                "consumerIp": "172.0.0.1",
+                "liveMode": false,
+                "updatedTime": "2020-03-19T06:44:22Z",
+                "statusTime": "2020-03-19T06:44:22Z",
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
+                    "lang": "en_US",
+                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                    "verificationLevel": "10",
+                    "transactionId": "127934948749341",
+                    "transactionType": "Member to Merchant Transfer (Order)",
+                    "description": "neteller.account@example.org to Neteller Simulator Test",
+                    "status": "paid",
+                    "processor": "NETELLER"
+                },
+                "availableToSettle": 0,
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
                 }
-              ]
             }
 
 # Group Standalone Credits 
@@ -1694,21 +1812,57 @@ Click on **Process Standalone Credits** above to see how to process a Standalone
               "customerIp": "204.91.0.12",
               "description": "Pay surplus"
             }    
-            
+  
 + Response 200 (application/json)
 
     + Body
 
             {
-              "id": "e075f2ae-dfc4-4f6d-8d89-61158367b6a6",
-              "amount": 40,
-              "merchantRefNum": "merchantRefNum-151",
-              "paymentHandleToken": "SC9mbfZSITB5OwDJ",
-              "customerIp": "204.91.0.12",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "PENDING",
-              "description": "Pay surplus"
+                "id": "ff9bb334-5f7b-4b99-a3bd-abda1d7c529e",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PH1c9QG7Zwj4N38E",
+                "merchantRefNum": "29f28809-5281-497f-aa9f-40f58018edb3",
+                "currencyCode": "USD",
+                "txnTime": "2020-03-19T07:15:06.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "PENDING",
+                "gatewayReconciliationId": "29f28809-5281-497f-aa9f-40f58018edb3",
+                "amount": 500,
+                "returnLinks": [
+                    {
+                        "rel": "on_failed",
+                        "href": "https://usgaminggamblig.com/payment/return/failed"
+                    },
+                    {
+                        "rel": "on_cancelled",
+                        "href": "https://usgaminggamblig.com/payment/return/cancel"
+                    },
+                    {
+                        "rel": "default",
+                        "href": "https://usgaminggamblig.com/payment/return/success"
+                    }
+                ],
+                "liveMode": false,
+                "updatedTime": "2020-03-19T07:15:06Z",
+                "statusTime": "2020-03-19T07:15:06Z",
+                "gatewayResponse": {
+                    "id": "664099288591333",
+                    "amount": "500",
+                    "currency": "USD",
+                    "transactionType": "Merchant to Member Transfer",
+                    "description": "Neteller Simulator Test to neteller.account@example.org",
+                    "status": "pending",
+                    "processor": "NETELLER"
+                },
+                "neteller": {
+                    "consumerId": "neteller.account@example.org"
+                }
             }
 
 ## Get Standalone Credits [GET /v1/standalonecredits/{standaloneCreditsId}]
@@ -1941,6 +2095,14 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `customerIp`:`204.91.0.12` (string) - This is the customer's IP address.
     _length<=39_
 + Include Metadata Object
++ `gatewayReconciliationId`: `QAAAAABHCI` (string) - Transaction identifier that can be used to reconcile this transaction with the provider gateway.
+    _Read Only_
++ Include Gateway Response
++ `updatedTime`: `2016-01-01T04:5:55Z` (string) - Indicates the last updated time for the resource.
+    _Read Only_
++ `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
+    _Read Only_
++ Inculde neteller
 
 ## PaymentHandleRequest (object)
 
@@ -2065,6 +2227,18 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + Include Metadata Object
 + `statusReason` - This is reason for the status. This is present in case of ERROR, FAILURE, HELD status.
     _length<=255_
++ `gatewayReconciliationId`: `QAAAAABHCI` (string) - Transaction identifier that can be used to reconcile this transaction with the provider gateway.
+    _Read Only_
++ `updatedTime`: `2016-01-01T04:5:55Z` (string) - Indicates the last updated time for the resource.
+    _Read Only_
++ `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
+    _Read Only_
++ Incude neteller
++ `availableToRefund`:`25` (number) - This is the amount of the Authorization remaining to refund, in minor units.
+    _Read Only, max=999999999_
++ `links` (array) - If applicable, this is a list of links to the related resource.
+            + `rel` (string) - This is the description or relation of the link. For example, default, redirect_payment, first, prev, next, last.
+            + `href` (string) - This is the actual URL of the link.
 
 ## Profile
 
