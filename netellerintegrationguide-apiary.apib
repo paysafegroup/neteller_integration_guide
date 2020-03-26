@@ -418,7 +418,7 @@ To process NETELLER Standalone Credits, you have to make the following API calls
 ![Standalone Credits- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [NETELLER Merchant Dashboard](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** All of your webhook settings are migrated, and you will receive webhook events on the URL that you have already configured. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
@@ -426,6 +426,7 @@ Webhooks will be triggered for the following events:
 |PAYMENT_HANDLE_PAYABLE | The Payment Handle status is PAYABLE. You can use it for the payment call. |
 |PAYMENT_HANDLE_COMPLETED | Payments call is received for the associated Payment Handle. |
 |PAYMENT_HANDLE_FAILED | The Payment Handle request failed. The failure could be due to an error or a declined transaction. |
+|PAYMENT_HANDLE_EXPIRED | Payment handle has expired. Either the user did not complete the authentication, or the payment request was not generated within 15 minutes of the payment handle creation. |
 |PAYMENT_COMPLETED | The payment request is completed. |
 |PAYMENT_HELD | The payment request is placed on hold due to risk considerations. |
 |PAYMENT_FAILED | The payment request failed due to an error or a declined transaction. |
@@ -433,6 +434,8 @@ Webhooks will be triggered for the following events:
 |SA_CREDIT_HELD | The Standalone Credits request is placed on hold due to risk considerations. |
 |SA_CREDIT_FAILED | The Standalone Credits request failed due to an error or a declined transaction. |
 |SA_CREDIT_CANCELLED | The Standalone Credits request is cancelled. |
+
+> **Note:** The correct order for the Payment Handle event status is INITIATED -> PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "Get Payment Handle" for the exact status of the Payment Handle.
 
 ## Sample Webhooks Payload
 This is an example of a typical webhooks payload received when a Payments call is received for an associated Payment Handle.
@@ -467,11 +470,11 @@ This is an example of a typical webhooks payload received when a Payments call i
 
 ## Webhook Best Practices 
 + When the status of one of your transaction request changes, Paysafe immediately sends a callback to your webhook's endpoint URL to inform you of the status change. 
-+ To acknowledge the receipt of a webhook, Paysafe expects to get an HTTP status of 200 OK or 202 OK from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook and we attempt to resend it.
++ To acknowledge the receipt of a webhook, Paysafe expects to get an HTTP status of 200 OK or 202 ACCEPTED from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook and we attempt to resend it.
 + If the callback for the transaction request status change event fails (i.e., Paysafe does not get an acknowledgement of receipt with an HTTP Status Code of 200 or 202), Paysafe makes a maximum of 2 additional attempts (total 3 attempts) to send a callback to that URL.
 + As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should make sure that there is continued availability of your endpoint.
 + All endpoint URLs should use HTTPS/SSL to ensure security.
-+ In case you have recieved the same notification multiple times for an already processed event, we request you to kindly ignore the duplicate notification.
++ In case you have received the same notification multiple times for an already processed event, we request you to kindly ignore the duplicate notification. It is recommended to make the notification URL endpoints idempotent.
 
 # Error Summary
 ## Common Errors
