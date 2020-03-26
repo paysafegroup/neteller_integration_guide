@@ -435,7 +435,7 @@ Webhooks will be triggered for the following events:
 |SA_CREDIT_FAILED | The Standalone Credits request failed due to an error or a declined transaction. |
 |SA_CREDIT_CANCELLED | The Standalone Credits request is cancelled. |
 
-> **Note:** The correct order for the Payment Handle event status is INITIATED -> PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "Get Payment Handle" for the exact status of the Payment Handle.
+> **Note:** The correct order for the Payment Handle event status is INITIATED -> PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
 
 ## Sample Webhooks Payload
 This is an example of a typical webhooks payload received when a Payments call is received for an associated Payment Handle.
