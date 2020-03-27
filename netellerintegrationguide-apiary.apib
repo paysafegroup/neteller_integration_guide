@@ -418,11 +418,11 @@ To process NETELLER Standalone Credits, you have to make the following API calls
 ![Standalone Credits- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are migrated, and you will receive webhook events on the URL that you have already configured. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** All of your webhook settings are migrated, and you will receive webhook events on the URL that you have already configured. Most of the events are enabled by default. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
-|----------|-----------|
+|----------|----------|
 |PAYMENT_HANDLE_PAYABLE | The Payment Handle status is PAYABLE. You can use it for the payment call. |
 |PAYMENT_HANDLE_COMPLETED | Payments call is received for the associated Payment Handle. |
 |PAYMENT_HANDLE_FAILED | The Payment Handle request failed. The failure could be due to an error or a declined transaction. |
@@ -435,7 +435,7 @@ Webhooks will be triggered for the following events:
 |SA_CREDIT_FAILED | The Standalone Credits request failed due to an error or a declined transaction. |
 |SA_CREDIT_CANCELLED | The Standalone Credits request is cancelled. |
 
-> **Note:** The correct order for the Payment Handle event status is INITIATED -> PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
+> **Note:** The correct order for the Payment Handle event status is PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
 
 ## Sample Webhooks Payload
 This is an example of a typical webhooks payload received when a Payments call is received for an associated Payment Handle.
@@ -2078,11 +2078,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `paymentType`: (enum) - This is the payment type associated with the Payment Handle used for this request.
     _Read Only_
     + Members
-        + CARD
-        + SIGHTLINE
-        + SKRILL
         + NETELLER
-        + VIPPREFERRED
 + `status`:`PENDING` (enum) - This is the status of the transaction request.
     _Read Only_
     + Members
@@ -2105,7 +2101,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _Read Only_
 + `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
     _Read Only_
-+ Inculde neteller
++ Include neteller
 
 ## PaymentHandleRequest (object)
 
@@ -2139,7 +2135,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `action`:`REDIRECT` (enum) - This specifies the next step of the user journey once they proceed to the Payment.
     _Read Only_
     + Members
-        + REDIRECT -The user must be redirected in order to complete a Payment, e.g., when an alternate payment method like Paysafecard is used.
+        + REDIRECT - The user must be redirected in order to complete a Payment.
+        + NONE - No user action is required. For processing Standalone Credits, action will always be NONE.
 + `executionMode`:`SYNCHRONOUS` (enum) - This specifies the action of the merchant server in order to complete the Payment.
     + Members
         + SYNCHRONOUS - The status of the Payment request will be returned synchronously to the merchant, e.g., a credit card request.
@@ -2184,8 +2181,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _max=3_
     + `accountId`: `1009355920` (string) - This is the merchant account for which the payment method and currency are enabled.
         _Read Only, length<=10_
-            
-
 
 ## PaymentsRequest (object)
 
@@ -2236,7 +2231,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _Read Only_
 + `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
     _Read Only_
-+ Incude neteller
++ Include neteller
 + `availableToRefund`:`25` (number) - This is the amount of the Authorization remaining to refund, in minor units.
     _Read Only, max=999999999_
 + `links` (array) - If applicable, this is a list of links to the related resource.
@@ -2276,7 +2271,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _length<=255_
     + `accountNumber` - This is the account number of the recipient.
         _length<=25_
-
 
 ## Settlement
 + `id`: `25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., Refunds.
