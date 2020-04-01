@@ -1496,10 +1496,6 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
     + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
         _Optional_
 
-+ Attributes
-
-    + Include paymenthandles
-
 + Request Look Up Payment Handle Using Merchant Reference Number (application/json)
 
     + Headers
@@ -1508,6 +1504,10 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
             Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
+
++ Attributes
+
+    + Include paymenthandles
 
     + Body
 
@@ -1755,10 +1755,6 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
     + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
         _Optional_
 
-+ Attributes
-
-    + Include payments
-
 + Request Look Up Payment Using Merchant Reference Number (application/json)
 
     + Headers
@@ -1768,6 +1764,9 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
 
 + Response 200 (application/json)
 
+    + Attributes
+        + Include payments
+        
     + Body
 
             {
@@ -1972,11 +1971,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _Optional_
 
 
-+ Attributes
-
-    + Include standalonecredits
-
-
 + Request Look Up Standalone Credits Using Merchant Reference Number (application/json)
 
     + Headers
@@ -1987,6 +1981,9 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 
 + Response 200 (application/json)
 
+    + Attributes
+        + Include standalonecredits
+    
     + Body
 
             {
