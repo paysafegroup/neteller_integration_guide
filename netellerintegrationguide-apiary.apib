@@ -1505,9 +1505,8 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
 
 + Response 200 (application/json)
 
-+ Attributes
-
-    + Include paymenthandles
+    + Attributes
+        + Include paymenthandles
 
     + Body
 
@@ -1746,6 +1745,7 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
 + Parameter
 
    + merchantRefNum : `merchantRefNum-145` - This is the merchant reference number created by the merchant and submitted as part of the Payments request.
+        _Mandatory_
    + limit : `32` (number) - This is the total number of records to return. Default = 10.
         _Optional_ _Max=50_
     + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
@@ -1960,7 +1960,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 
 + Parameter
 
-    + merchantRefNum : "merchantRefNum-151"
+    + merchantRefNum : `merchantRefNum-101` (string) - This is the merchant reference number created by the merchant and submitted as part of the request.
+        _Mandatory_
     + limit : `32` (number) - This is the total number of records to return. Default = 10.
         _Optional_ _Max=50_
     + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
