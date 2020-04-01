@@ -1626,53 +1626,54 @@ Click on **Process Payments** above to see how to create a Payment request using
     + Body
 
             {
-            "id": "67869d92-4df1-455b-80f4-780abbce41b4",
-            "paymentType": "NETELLER",
-            "paymentHandleToken": "PHi2MeARP5OxuXIm",
-            "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
-            "currencyCode": "USD",
-            "settleWithAuth": true,
-            "txnTime": "2020-03-19T06:38:07.000+0000",
-            "billingDetails": {
-                "street1": "100 Queen",
-                "street2": "Unit 201",
-                "city": "Toronto",
-                "zip": "M5H 2N2",
-                "country": "CA"
-            },
-            "status": "COMPLETED",
-            "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
-            "amount": 100,
-            "consumerIp": "172.0.0.1",
-            "liveMode": false,
-            "updatedTime": "2020-03-19T06:44:22Z",
-            "statusTime": "2020-03-19T06:44:22Z",
-            "gatewayResponse": {
-                "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
-                "totalAmount": "100",
-                "currency": "USD",
-                "lang": "en_US",
-                "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
-                "verificationLevel": "10",
-                "transactionId": "127934948749341",
-                "transactionType": "Member to Merchant Transfer (Order)",
-                "description": "neteller.account@example.org to Neteller Simulator Test",
-                "status": "paid",
-                "processor": "NETELLER"
-            },
-            "availableToSettle": 0,
-            "neteller": {
-                "consumerId": "neteller.account@example.org",
-                "consumerIdLocked": true
-            },
-            "settlements": {
-                "amount": 100,
-                "txnTime": "2020-03-19T06:38:07.000+0000",
-                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
                 "id": "67869d92-4df1-455b-80f4-780abbce41b4",
-                "status": "COMPLETED"
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "currencyCode": "USD",
+                "settleWithAuth": true,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "COMPLETED",
+                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "amount": 100,
+                "consumerIp": "172.0.0.1",
+                "liveMode": false,
+                "updatedTime": "2020-03-19T06:44:22Z",
+                "statusTime": "2020-03-19T06:44:22Z",
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
+                    "lang": "en_US",
+                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                    "verificationLevel": "10",
+                    "transactionId": "127934948749341",
+                    "transactionType": "Member to Merchant Transfer (Order)",
+                    "description": "neteller.account@example.org to Neteller Simulator Test",
+                    "status": "paid",
+                    "processor": "NETELLER"
+                },
+                "availableToSettle": 0,
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                },
+                "settlements": {
+                    "amount": 100,
+                    "txnTime": "2020-03-19T06:38:07.000+0000",
+                    "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                    "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                    "status": "COMPLETED"
+                }
             }
-            }
+
  
 ## Get Payments [GET /v1/payments/{paymentId}]
 <a name="getpayment" title="Look Up a Payment"></a>
@@ -1736,6 +1737,7 @@ Click on **Get Payments** above to see how to look up a Payment using the ID ret
                 }
             }
 
+
 ## Get Payments Using Merchant Reference number [GET /v1/payments?merchantRefNum={merchantRefNum}]
 <a name="getpaymentmerchantrefnum" title="Look Up a Payment Using a Merchant Reference Number"></a>
 
@@ -1744,6 +1746,18 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
 + Parameter
 
    + merchantRefNum : `merchantRefNum-145` - This is the merchant reference number created by the merchant and submitted as part of the Payments request.
+   + limit : `32` (number) - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` (UTC Date) - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
+        _Optional_
+
++ Attributes
+
+    + Include payments
 
 + Request Look Up Payment Using Merchant Reference Number (application/json)
 
@@ -1757,46 +1771,61 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
     + Body
 
             {
-                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
-                "paymentType": "NETELLER",
-                "paymentHandleToken": "PHi2MeARP5OxuXIm",
-                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
-                "currencyCode": "USD",
-                "settleWithAuth": true,
-                "txnTime": "2020-03-19T06:38:07.000+0000",
-                "billingDetails": {
-                    "street1": "100 Queen",
-                    "street2": "Unit 201",
-                    "city": "Toronto",
-                    "zip": "M5H 2N2",
-                    "country": "CA"
-                },
-                "status": "COMPLETED",
-                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
-                "amount": 100,
-                "consumerIp": "172.0.0.1",
-                "liveMode": false,
-                "updatedTime": "2020-03-19T06:44:22Z",
-                "statusTime": "2020-03-19T06:44:22Z",
-                "gatewayResponse": {
-                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
-                    "totalAmount": "100",
-                    "currency": "USD",
-                    "lang": "en_US",
-                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
-                    "verificationLevel": "10",
-                    "transactionId": "127934948749341",
-                    "transactionType": "Member to Merchant Transfer (Order)",
-                    "description": "neteller.account@example.org to Neteller Simulator Test",
-                    "status": "paid",
-                    "processor": "NETELLER"
-                },
-                "availableToSettle": 0,
-                "neteller": {
-                    "consumerId": "neteller.account@example.org",
-                    "consumerIdLocked": true
-                }
+            "meta": {
+                "numberOfRecords": 1,
+                "limit": 10,
+                "page": 1
+            },
+            "payments": [
+                {
+                        "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                        "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                        "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                        "amount": 100,
+                        "currencyCode": "USD",
+                        "paymentType": "NETELLER",
+                        "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                        "settleWithAuth": true,
+                        "consumerIp": "172.0.0.1",
+                        "billingDetails": {
+                            "street1": "100 Queen",
+                            "street2": "Unit 201",
+                            "zip": "M5H 2N2",
+                            "city": "Toronto",
+                            "country": "CA"
+                        },
+                        "liveMode": false,
+                        "txnTime": "2020-03-19T06:38:07Z",
+                        "updatedTime": "2020-03-19T06:44:22Z",
+                        "statusTime": "2020-03-19T06:44:22Z",
+                        "status": "COMPLETED",
+                        "gatewayResponse": {
+                            "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                            "totalAmount": "100",
+                            "currency": "USD",
+                            "lang": "en_US",
+                            "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                            "verificationLevel": "10",
+                            "transactionId": "127934948749341",
+                            "transactionType": "Member to Merchant Transfer (Order)",
+                            "description": "neteller.account@example.org to Neteller Simulator Test",
+                            "status": "paid",
+                            "processor": "NETELLER"
+                        },
+                        "links": [
+                            {
+                                "rel": "self",
+                                "href": "https://api.qa.paysafe.com/alternatepayments/v1/accounts/1011872745/payments/67869d92-4df1-455b-80f4-780abbce41b4"
+                            }
+                        ],
+                        "neteller": {
+                            "consumerId": "neteller.account@example.org",
+                            "consumerIdLocked": true
+                        }
+                    }
+                ]
             }
+
 
 # Group Standalone Credits 
 
@@ -1881,6 +1910,7 @@ Click on **Process Standalone Credits** above to see how to process a Standalone
                 }
             }
 
+
 ## Get Standalone Credits [GET /v1/standalonecredits/{standaloneCreditsId}]
 <a name="getstandalonecredits" title="Look Up Standalone Credits"></a>
 
@@ -1909,7 +1939,6 @@ Click on **Get Standalone Credits** above to see how to look up Standalone Credi
               "paymentHandleToken": "SCZJg09GWSv36NLB",
               "txnTime": "2018-12-14T15:12:18Z",
               "customerIp": "10.10.12.64",
-              "dupCheck": true,
               "description": "Magazine subscription",
               "currencyCode": "GBP",
               "paymentType": "NETELLER",
@@ -1932,7 +1961,19 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 
 + Parameter
 
-   + merchantRefNum : "merchantRefNum-151"
+    + merchantRefNum : "merchantRefNum-151"
+    + limit : `32` (number) - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` (UTC Date) - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
+        _Optional_
+
++ Attributes
+
+    + Include standalonecredits
 
 + Request Look Up Standalone Credits Using Merchant Reference Number (application/json)
 
@@ -2184,19 +2225,12 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _Read Only_
 
 ## paymenthandles
-    
 + Include Metadata Object
 + `paymenthandles`: (array) - An array of Payment Handles.
 
 ## payments
-    
 + Include Metadata Object
-+ `payments`: (array) - An array of Payment Handles.
-
-## standalonecredits
-    
-+ Include Metadata Object
-+ `paymenthandles`: (array) - An array of Payment Handles.
++ `payments`: (array) - An array of Payments.
 
 ## Payment Methods Get
 + paymentMethods (object)
@@ -2298,6 +2332,11 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _length<=255_
     + `accountNumber` - This is the account number of the recipient.
         _length<=25_
+
+## standalonecredits
+    
++ Include Metadata Object
++ `standalonecredits`: (array) - An array of Standalone Credits.
 
 ## Settlement
 + `id`: `25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., Refunds.
