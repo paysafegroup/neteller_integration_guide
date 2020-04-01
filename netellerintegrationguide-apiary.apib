@@ -1486,6 +1486,19 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
 + Parameter
 
     + merchantRefNum : `13995817730005389` - This is the *merchantRefNum* used in the original Payment Handle creation request.
+        _Mandatory_
+    + limit : `32` - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` - This is the end date in UTC. Default = current date and time.
+        _Optional_
+
++ Attributes
+
+    + Include paymenthandles
 
 + Request Look Up Payment Handle Using Merchant Reference Number (application/json)
 
@@ -2170,6 +2183,10 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 +`statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
     _Read Only_
 
+## paymenthandles
+    
++ Include Metadata Object
++ `paymenthandles`: (array) - An array of Payment Handles.
 
 ## Payment Methods Get
 + paymentMethods (object)
