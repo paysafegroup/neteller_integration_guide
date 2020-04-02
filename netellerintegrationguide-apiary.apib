@@ -149,7 +149,8 @@ The following code sample shows a minimal Paysafe Checkout example for NETELLER 
                 "canEditAmount": false,
                 "paymentMethodDetails": {
                     "neteller": {
-                        "consumerId": "john.doe@email.com"
+                        "consumerId": "john.doe@email.com",
+                        "consumerIdLocked": true
                     }
                 }
             }, function(instance, error, result) {
@@ -419,7 +420,7 @@ To process NETELLER Standalone Credits, you have to make the following API calls
 ![Standalone Credits- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are migrated, and you will receive webhook events on the URL that you have already configured. Most of the events are enabled by default. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** If you have already set up webhooks events in the Neteller Merchant Portal, below events are enabled by default. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
@@ -436,7 +437,7 @@ Webhooks will be triggered for the following events:
 |SA_CREDIT_FAILED | The Standalone Credits request failed due to an error or a declined transaction. |
 |SA_CREDIT_CANCELLED | The Standalone Credits request is cancelled. |
 
-> **Note:** The correct order for the Payment Handle event status is PROCESSING -> PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
+> **Note:** The correct order for the Payment Handle event status is PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
 
 ## Sample Webhooks Payload
 This is an example of a typical webhooks payload received when a Payments call is received for an associated Payment Handle.
@@ -1088,13 +1089,14 @@ This is a read-only raw response returned by an acquirer.
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=150`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
-|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
+|consumerIdLocked       |boolean                    |If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
 |detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
 |detail1Text            |string<br/>`length<=150`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
 ```{   
     "neteller":{ 
       "consumerId":"neteller.account@example.org",
+      "consumerIdLocked":true,
       "detail1Description":"description",
       "detail1Text":"Details 1 text"
    }
@@ -2112,7 +2114,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Mandatory for withdrawal request.
             _length<=150_
-        + `consumerIdLocked`: `false` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.
+        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.
         + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
