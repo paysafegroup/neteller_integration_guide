@@ -475,7 +475,7 @@ This is an example of a typical webhooks payload received when a Payments call i
 + To acknowledge the receipt of a webhook, Paysafe expects to get an HTTP status of 200 OK or 202 ACCEPTED from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook and we attempt to resend it.
 + If the callback for the transaction request status change event fails (i.e., Paysafe does not get an acknowledgement of receipt with an HTTP Status Code of 200 or 202), Paysafe makes a maximum of 2 additional attempts (total 3 attempts) to send a callback to that URL.
 + As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should make sure that there is continued availability of your endpoint.
-+ All endpoint URLs should use HTTPS/SSL to ensure security.
++ All endpoint URLs should use HTTPS/SSL to ensure security. Please note that only the default **HTTPS port 443** is supported.
 + In case you have received the same notification multiple times for an already processed event, we request you to kindly ignore the duplicate notification. It is recommended to make the notification URL endpoints idempotent.
 
 # Error Summary
