@@ -3,6 +3,12 @@ HOST: https://api.test.paysafe.com/paymenthub/
 
 # NETELLER Integration Guide
 
+# Release Notes
+|API Version    |Release Date          |Details|
+|---            |---                   |---|
+|v1             |November 2019         |Document Release|
+|v1             |March 2020            |Webhooks Enhancements - Payload, Best Practices|
+
 This guide provides you step-by-step instructions to integrate NETELLER via the new Paysafe Payments API. It also describes changes to the commonly used [NETELLER REST API](https://paysafegroup.github.io/neteller_rest_api_v1/). 
 # Integrating to the Paysafe Payments API 
 Here's a step-by-step guide:
@@ -15,10 +21,10 @@ Here's a step-by-step guide:
 # API Keys
 <a name="apikeys" title="Get your API Keys"></a>
 The Paysafe Payments API uses two distinct API keys:<br/>
-* The Secret Key – used for all server-to-server API requests.</li>
+* The Private Key – used for all server-to-server API requests.</li>
 * The Public Key – used as the value for the apiKey parameter when using the Paysafe Checkout SDK option.</li>
 
-You can retrieve your Secret and Public keys for both the Test & Live accounts via the [NETELLER Merchant Dashboard](https://merchant.neteller.com):
+You can retrieve your Private and Public keys for both the Test & Live accounts via the [NETELLER Merchant Dashboard](https://merchant.neteller.com):
 * [Live](https://merchant.neteller.com)
 * [Test](https://test.merchant.neteller.com/)
 
@@ -62,8 +68,8 @@ Here is a mapping of how NETELLER REST API endpoints map to the Paysafe Payments
 The Paysafe Payments API allows you to process payment-related requests using the REST protocol. The protocol uses JSON for all requests and responses.
 ### API Endpoints
 The API endpoint (URI or URL) points to either the Test or Production (live) environment.
-* Test API endpoint: ```https://api.test.paysafe.com/```
-* Production API endpoint: ```https://api.paysafe.com/```
+* Test API endpoint: ```https://api.test.paysafe.com/paymenthub/v1 ```
+* Production API endpoint: ```https://api.paysafe.com/paymenthub/v1 ```
 
 ### Making API Calls
 Before you make your first API call, you must have the following information:
@@ -72,6 +78,10 @@ Before you make your first API call, you must have the following information:
 * **Message body**: This must contain valid Paysafe JSON objects as required for the type of request. Not all API calls require a message-body; for example, GET requests do not require a body.
 * **Resource ID**: Identifies the unique ID of a resource.
 ![Structure of a Typical Payments API Request](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/authentication_example_payments.png)
+* **Payment Simulator**: While testing your integration, you can choose whether you want to make a real payment and go through the payment gateway, or you want to use a page which lets you simulate all payment handle statuses. 
+The behavior is controlled by using an HTTP header named “**Simulator**” in your request, which has the following possible values:
+   * **"INTERNAL" (default)** – which redirects you to the simulator page. 
+   * **"EXTERNAL"** – which redirects you to the NETELLER payment gateway. 
 
 <a name="paymentscheckout" title="Payments Checkout"></a>
 ## The Paysafe Checkout
@@ -140,7 +150,8 @@ The following code sample shows a minimal Paysafe Checkout example for NETELLER 
                 "canEditAmount": false,
                 "paymentMethodDetails": {
                     "neteller": {
-                        "consumerId": "john.doe@email.com"
+                        "consumerId": "john.doe@email.com",
+                        "consumerIdLocked": true
                     }
                 }
             }, function(instance, error, result) {
@@ -215,7 +226,8 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example fo
                         "consumerId": "john.doe@email.com"
                     }
                 }
-            }, function(instance, error, result) {
+            }, 
+            function(instance, error, result) {
                 if (result && result.paymentHandleToken) {
                     console.log(result.paymentHandleToken);
                     // make AJAX call to Payments API
@@ -223,7 +235,8 @@ The following code sample shows a minimal Paysafe Withdrawal Checkout example fo
                     console.error(error);
                     // Handle the error
                 }
-            }, function(stage, expired) {
+            }, 
+            function(stage, expired) {
                 switch(stage) {
                     case "PAYMENT_HANDLE_NOT_CREATED": // Handle the scenario
                     case "PAYMENT_HANDLE_CREATED": // Handle the scenario
@@ -310,6 +323,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=150|The email address of the customer who is making or receiving the payment. |
+|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
 |detail1Description     |string|no|`length<=15`|Displays additional details of the product.|
 |detail1Text            |string|no|`length<=150` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -407,49 +421,63 @@ To process NETELLER Standalone Credits, you have to make the following API calls
 ![Standalone Credits- Transfer Out](http://mweb1-paysafeio-foreign.fra.skrill.net/fileadmin/user_upload/standalone_credit.png)
 <a name="Webhooks" title="Webhooks Events"></a>
 # Webhooks Events
-> **Note:** All of your webhook settings are intact and you will receive webhook events on the URL that you have already configured in [NETELLER Merchant Dashboard](https://merchant.neteller.com). However, if you need to change or modify any of your webhook settings, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
+> **Note:** If you have already set up webhooks events in the Neteller Merchant Portal, below events are enabled by default. However, if you need to modify any of your webhook settings, or have not configured earlier, you can still do that. Please contact us at <merchantsupport@paysafe.com>.
 
 Webhooks will be triggered for the following events: 
 |Event Type|Description|
-|----------|-----------|
+|----------|----------|
 |PAYMENT_HANDLE_PAYABLE | The Payment Handle status is PAYABLE. You can use it for the payment call. |
 |PAYMENT_HANDLE_COMPLETED | Payments call is received for the associated Payment Handle. |
 |PAYMENT_HANDLE_FAILED | The Payment Handle request failed. The failure could be due to an error or a declined transaction. |
+|PAYMENT_HANDLE_EXPIRED | Payment handle has expired. Either the user did not complete the authentication, or the payment request was not generated within 15 minutes of the payment handle creation. |
 |PAYMENT_COMPLETED | The payment request is completed. |
 |PAYMENT_HELD | The payment request is placed on hold due to risk considerations. |
 |PAYMENT_FAILED | The payment request failed due to an error or a declined transaction. |
-|SETTLEMENT_COMPLETED | The settlement request is completed. |
-|SETTLEMENT_FAILED | The settlement request failed due to an error or a declined transaction. |
 |SA_CREDIT_COMPLETED | The Standalone Credits request is completed. |
 |SA_CREDIT_HELD | The Standalone Credits request is placed on hold due to risk considerations. |
 |SA_CREDIT_FAILED | The Standalone Credits request failed due to an error or a declined transaction. |
 |SA_CREDIT_CANCELLED | The Standalone Credits request is cancelled. |
+
+> **Note:** The correct order for the Payment Handle event status is PAYABLE -> COMPLETED. It is unlikely that the notifications might be out of order, but if this happens, please call the API "[Get Payment Handle](#getpaymenthandle)" for the exact status of the Payment Handle.
 
 ## Sample Webhooks Payload
 This is an example of a typical webhooks payload received when a Payments call is received for an associated Payment Handle.
 
 ```
 {
-    "accountId": "1009688230",
-    "id": "a49ba790-9cc5-4502-9f4a-dccc72460cf1",
-    "merchantRefNum": "2e568da7c4643d567d60",
-    "amount": 500,
-    "usage": "SINGLE_USE",
-    "executionMode": "SYNCHRONOUS",
-    "currencyCode": "USD",
-    "type": "PAYMENT_HANDLE",
-    "status": "COMPLETED",
-    "paymentType": "NETELLER"
+        "payload": {
+        "accountId": "1011872745",
+        "id": "944b9b19-c07c-4953-98ec-761272aef759",
+        "merchantRefNum": "3de43050-a857-4b13-a27d-da35daea253d",
+        "amount": 100,
+        "currencyCode": "USD",
+        "status": "COMPLETED",
+        "paymentType": "NETELLER",
+        "txnTime": "2020-03-18T11:53:29Z"
+        },
+        "eventType": "PAYMENT_HANDLE_COMPLETED",
+        "attemptNumber": "1",
+        "resourceId": "944b9b19-c07c-4953-98ec-761272aef759",
+        "eventDate": "2020-03-18T11:53:29Z",
+        "links": [
+         {
+           "href": "https://api.qa.paysafe.com/alternatepayments/v1/accounts/1011872745/paymenthandles/944b9b19-c07c-4953-98ec-761272aef759",
+           "rel": "payment_handle"
+         }
+        ],
+        "mode": "live",
+        "eventName": "PAYMENT_HANDLE_COMPLETED"
 }
 ```
 > **Note**: Unlike your NETELLER Webhook, you will not receive a Secret key here as part of the payload. Rather, you need to consume the payload directly. 
 
-## Some Notes on Webhooks
+## Webhook Best Practices 
 + When the status of one of your transaction request changes, Paysafe immediately sends a callback to your webhook's endpoint URL to inform you of the status change. 
-+ To acknowledge the receipt of a webhook, Paysafe expects to get an HTTP status of 200 OK from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook and we attempt to resend it at a later time.
-+ If the callback for the transaction request status change event fails (i.e., Paysafe does not get an acknowledgement of receipt with an HTTP Status Code of 200), Paysafe makes a maximum of 10 additional attempts to send a callback to that URL until successfully received – twice daily for 5 days.
++ To acknowledge the receipt of a webhook, Paysafe expects to get an HTTP status of 200 OK or 202 ACCEPTED from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook and we attempt to resend it.
++ If the callback for the transaction request status change event fails (i.e., Paysafe does not get an acknowledgement of receipt with an HTTP Status Code of 200 or 202), Paysafe makes a maximum of 2 additional attempts (total 3 attempts) to send a callback to that URL.
 + As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should make sure that there is continued availability of your endpoint.
-+ All endpoint URLs should use HTTPS/SSL to ensure security.
++ All endpoint URLs should use HTTPS/SSL to ensure security. Please note that only the default **HTTPS port 443** is supported.
++ In case you have received the same notification multiple times for an already processed event, we request you to kindly ignore the duplicate notification. It is recommended to make the notification URL endpoints idempotent.
 
 # Error Summary
 ## Common Errors
@@ -585,7 +613,7 @@ Sample Response with List Data
     "detail1Description":"description",
     "detail1Text":"Details 1 text"  
     },
-  "link": [{
+  "links": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
         },
@@ -988,6 +1016,20 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
    }
    }
 ```
+<a name="fieldErrorobject" title= "Field Error Object"></a>
+## fieldError
+
+| Element            | Type   | Description                 |
+|--------------------|--------|-----------------------------|
+|field             |string  |Identifies the JSON request field.|
+|error            |string  |The problem associated with field.|
+
+```apib
+        {
+            "field": "transaction.accountProfile.email",
+            "error": "Required field"
+        }
+```
 
 <a name="gatewayresponseobject" title= "Gateway Response Object"></a>
 ## gatewayResponse
@@ -1002,6 +1044,45 @@ This is a read-only raw response returned by an acquirer.
 |status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
 |lang                |string  |The language that the Paysafe Checkout should be displayed in.<br/>See [Possible values](#Localecodes) for a complete list of languages supported.|
 
+<a name="linksobject" title="links Object"></a>
+## links
+
+|Element    |Type           |Description|
+|---        |---            |---|
+|rel        |enum           |This is the link type that allows different endpoints to be targeted depending on the end state of the transaction. Possible values are:<ul><li>redirect_payment</li><li>default</li><li>first</li><li>prev</li><li>next</li><li>last</li></ul>|
+|href       |string         |This is the URI of the resource.|
+|method     |string         |This is the HTTP method. |
+
+```apib
+{
+    "links": [{
+            "rel": "on_completed",
+            "href": "https://US_commerce_site/payment/return/success",
+        },
+        {
+            "rel": "on_failed",
+            "href": "https://US_commerce_site/payment/return/failed",
+        }
+    ]
+}
+```
+## meta
+
+|Element    |Type           |Description|
+|---        |---            |---|
+|numberOfRecords|number|This is the number of records returned in the lookup.|
+|limit |number         |This is the number of records returned per page.|
+|page  |number         |This is the page of records on which the lookup starts.|
+
+```apib
+{
+    "meta": {
+               "numberOfRecords": 1,
+               "limit": 10,
+               "page": 1
+            }
+}
+```
 
 <a name="netellerobject" title="Neteller Object"></a>
 ## neteller
@@ -1009,12 +1090,14 @@ This is a read-only raw response returned by an acquirer.
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=150`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
+|consumerIdLocked       |boolean                    |If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
 |detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
 |detail1Text            |string<br/>`length<=150`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
 ```{   
     "neteller":{ 
       "consumerId":"neteller.account@example.org",
+      "consumerIdLocked":true,
       "detail1Description":"description",
       "detail1Text":"Details 1 text"
    }
@@ -1029,9 +1112,9 @@ This is a read-only raw response returned by an acquirer.
 |---                    |---                        |---       |
 |id                     |string<br/>`length<=32`    |This read-only attribute is the ID returned in the response. It can be used to retrieve the paymentHandle.|
 |accountId              |string<br/>`length<=10`    |This is the merchant account number used for the request. Include this parameter if you have more than one merchant account for the currency/payment type combination you are specifying. |
-|paymentHandleTokenFrom |string<br/>`length<=36`    |This is an existing paymentHandle ID created for a customer, from which the payment instrument and profile details are retrieved. |
+<!--|paymentHandleTokenFrom |string<br/>`length<=36`    |This is an existing paymentHandle ID created for a customer, from which the payment instrument and profile details are retrieved. |-->
 |merchantRefNum         |string<br/>`length<=50`   |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request. |
-|transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDITS</li></ul>|
+|transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDIT</li></ul>|
 |status                 |enum                       |This read-only attribute is the status of the request. Possible values are:<ul><li>INITIATED &ndash; The request was initiated with the downstream provider.</li><li>PAYABLE &ndash; You can use the Payment Handle for a Payment request.</li><li>PROCESSING &ndash; The Payment Handle was authorized by customer, awaiting PSP response.</li><li>FAILED &ndash; The transaction failed due to either an error or being declined.</li><li>EXPIRED &ndash; The Payment Handle expired because you did not proceed with the Payment transaction.</li><li>COMPLETED &ndash; The Payment request was initiated successfully using the Payment Handle.</li></ul>      |
 |usage                  |enum                       |This read-only attribute specifies how the Payment Handle will be used for Payments. Possible values are:<ul><li>SINGLE_USE &ndash; The Payment Handle can be used for one transaction only and expires if not used.</li><li>MULTI_USE &ndash; The Payment Handle can be used multiple times.</li></ul>|
 |paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible value is:<ul><li>NETELLER</li></ul>|
@@ -1043,9 +1126,14 @@ This is a read-only raw response returned by an acquirer.
 |neteller               |[neteller](#netellerobject)| These are details of the payment instrument used in the request. |
 |billingDetails         |[billingDetails](#billingdetailsobject)         |These are billing details for the request.<br/>**Note:** For single-use payment handles, this address information will be ignored if the *paymentHandleTokenFrom* parameter is included and there is already address information associated with that customer.|
 |profile                |[profile](#profileobject)  |This is the customer's profile. |
-|link            |[link](#linkobject)         |These are links to which to redirect the customer, where applicable. |
+|links            |[links](#linksobject)         |These are links to which to redirect the customer, where applicable. |
 |customerIp             |string<br/>`length<=39`    |This is the customer's IP address. |
 |timeToLiveSeconds      |number<br/>`length<=899`   |This read-only attribute is the period of time, in seconds, the *paymentHandleToken* is valid before expiration.|
+|returnLinks            |[returnLinks](#returnlinksobject)|These are links to which to redirect the customer, where applicable. |
+|txnTime                |UTC formatted date               |This is the date and time the request was processed. For example:<br/>2019-01-26T10:32:28Z|
+|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This is the read-only raw response returned by an acquirer. It is returned only if your account is configured accordingly.|
+|updatedTime|datetime|ISO 8601 format (UTC) This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`|
+|statusTime|datetime|ISO 8601 format (UTC) This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`|
 
 ```apib
 {
@@ -1067,7 +1155,7 @@ This is a read-only raw response returned by an acquirer.
         "zip": "BA1 2FJ",
         "country": "GB"
     },
-    "link": [{
+    "links": [{
             "rel": "on_completed",
             "href": "https://US_commerce_site/payment/return/success",
         },
@@ -1086,7 +1174,6 @@ This is a read-only raw response returned by an acquirer.
 |dupCheck           |boolean                                |This validates that this request is not a duplicate. A request is considered a duplicate if the *merchantRefNum* has already been used in a previous request within the past 90 days.<br/>**Note:** This value defaults to *true*.|
 |settleWithAuth     |boolean                                |This indicates whether the request is an Authorization only (no Settlement), or a Purchase (Authorization and Settlement).<br/><ul><li>false &ndash; The request is not settled</li><li>true &ndash; The request is settled</li></ul><br/>**Note:** Defaults to *true*.|
 |paymentHandleToken |string<br/>`length<=36`                |This is the Payment Handle token that represents the payment instrument to be used in the Payment request. |
-|authCode           |string<br/>`length<=50`                |This read-only attribute is the Authorization code assigned by the issuing bank and returned in the response.|
 |availableToSettle  |number                                 |This read-only attribute is the amount of the Authorization remaining to settle, in minor units.|
 |customerIp         |string<br/>`length<=39`                |This is the customer's IP address.|
 |description        |string<br/>`length<=255`               |This is a description of the transaction you provided.|
@@ -1097,6 +1184,12 @@ This is a read-only raw response returned by an acquirer.
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |error              |[error](#errorobject)                  |This is a read-only attribute       |
 |statusReason       |string<br/>`length<=255`               |This read-only attribute is a reason for the status. This is present in the case where *status* is ERROR, FAILURE, or HELD. |
+|paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible values are:<ul><li>CARD</li><li>PAYSAFECASH</li><li>PAYSAFECARD</li><li>VIP PREFERRED</li><li>SIGHTLINE</li><li>SKRILL</li><li>INSTANT ACH</li><li>ACH</li><li>EFT</li></ul>|
+|gatewayReconciliationId |string                 |Transaction identifier that can be used to reconcile this transaction with the provider gateway.<br/><i>Read Only</i>|
+|updatedTime             |datetime               |ISO 8601 format (UTC) </b>This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`<br/><i>Read Only</i>|
+|statusTime              |datetime               |ISO 8601 format (UTC) </b>This is the date and time the resource status was last updated, e.g., `2014-01-26T10:32:28Z`<br/><i>Read Only</i>|
+|availableToRefund  |number<br/>`max=99999999999`           |This is the amount of this Settlement that is available to Refund, in minor units. For example, US $10.99 would be 1099.|
+|links            |[links](#linksobject)         |These are links to which to redirect the customer, where applicable. |
 
 ```apib
 {
@@ -1132,30 +1225,6 @@ This is a read-only raw response returned by an acquirer.
               "email" : "john.smith@somedomain.com",
               "phone" : "713-444-5555"
              }
-```
-
-
-<a name="linkobject" title="link Object"></a>
-## link
-
-|Element    |Type           |Description|
-|---        |---            |---|
-|rel        |enum           |This is the link type that allows different endpoints to be targeted depending on the end state of the transaction. Possible values are:<ul><li>default - The default return URL that is used if specific status return URL is not defined.</li><li>on_completed - Is returned to this URL if the payment is completed.</li><li>on_failed - Is returned to this URL if the payment fails.</li></ul>|
-|href       |string         |This is the URI of the resource.|
-|method     |string         |This is the HTTP method. |
-
-```apib
-{
-    "link": [{
-            "rel": "on_completed",
-            "href": "https://US_commerce_site/payment/return/success",
-        },
-        {
-            "rel": "on_failed",
-            "href": "https://US_commerce_site/payment/return/failed",
-        }
-    ]
-}
 ```
 
 <a name="settlementobject" title="settlement Object"></a>
@@ -1236,6 +1305,7 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 "transactionType": "PAYMENT",
                 "neteller": {
                 "consumerId": "johndoe@email.com",
+                "consumerIdLocked": true,
                 "detail1Description":"description",
                 "detail1Text":"Details 1 text"  
                 },
@@ -1252,15 +1322,15 @@ Click on **Create a Payment Handle** above to see how to create a Payment Handle
                 },
                 "returnLinks": [{
                         "rel": "on_completed",
-                        "href": "https://usgaminggambling.com/payment/return/success",
+                        "href": "https://usgaminggambling.com/payment/return/success"
                     },
                     {
                         "rel": "on_failed",
-                        "href": "https://usgaminggambling.com/payment/return/failed",
+                        "href": "https://usgaminggambling.com/payment/return/failed"
                     },
                     {
                         "rel": "default",
-                        "href": "https://usgaminggambling.com/payment/",
+                        "href": "https://usgaminggambling.com/payment/"
                     }
                 ]
             }
@@ -1341,48 +1411,78 @@ Click on **Get Payment Handle** above to see how to look up a Payment Handle usi
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
 
     + Body
 
             {
-              "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-115",
-              "action": "REDIRECT",
-              "currencyCode": "GBP",
-              "usage": "SINGLE_USE",
-              "status": "EXPIRED",
-              "timeToLiveSeconds": 0,
-              "transactionType": "PAYMENT",
-              "paymentType": "NETELLER",
-              "executionMode": "SYNCHRONOUS",
-              "customerIp": "172.0.0.1",
-              "paymentHandleToken": "SC0YsGIIgFksiOsQ",
-              "billingDetails": {
-                "street": "George Street",
-                "street2": "3 Edgar Buildings",
-                "city": "Bath",
-                "zip": "BA1 2FJ",
-                "country": "GB"
-              },
-                "neteller": {
-                "consumerId": "johndoe@email.com",
-                "detail1Description":"description",
-                "detail1Text":"Details 1 text"  
+            "id": "037490af-89ee-4794-9022-f7b91a6ddaac",
+            "paymentType": "NETELLER",
+            "paymentHandleToken": "PHi2MeARP5OxuXIm",
+            "merchantRefNum": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+            "currencyCode": "USD",
+            "txnTime": "2020-03-19T06:38:07.000+0000",
+            "billingDetails": {
+                "street": "100 Queen",
+                "street2": "Unit 201",
+                "city": "Toronto",
+                "zip": "M5H 2N2",
+                "country": "CA"
+            },
+            "customerIp": "172.0.0.1",
+            "status": "INITIATED",
+            "links": [
+                {
+                    "rel": "redirect_payment",
+                    "href": "https://api.qa.paysafe.com/alternatepayments/v1/redirect?accountId=1011872745&paymentHandleId=037490af-89ee-4794-9022-f7b91a6ddaac&token=eyJhbGciOiJIUzI1NiJ9.eyJhY2QiOiIxMDExODcyNzQ1IiwicHlkIjoiMDM3NDkwYWYtODllZS00Nzk0LTkwMjItZjdiOTFhNmRkYWFjIiwiZXhwIjoxNTg0NjAxNjg4fQ.e-C3wR7Z3sqBLp0-lS4ksZNsKvs4jV-J_kLphB4N5aM"
+                }
+            ],
+            "liveMode": false,
+            "usage": "SINGLE_USE",
+            "action": "REDIRECT",
+            "executionMode": "SYNCHRONOUS",
+            "amount": 100,
+            "merchantDescriptor": {
+                "dynamicDescriptor": "OnlineStore",
+                "phone": "12345678"
+            },
+            "timeToLiveSeconds": 899,
+            "gatewayResponse": {
+                "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                "totalAmount": "100",
+                "currency": "USD",
+                "lang": "en_US",
+                "status": "pending",
+                "processor": "NETELLER"
+            },
+            "returnLinks": [
+                {
+                    "rel": "on_completed",
+                    "href": "https://usgaminggamblig.com/payment/return/completed"
                 },
-              "returnLinks": [{
-                        "rel": "on_completed",
-                        "href": "https://US_commerce_site/payment/return/success",
-                    },
-                    {
-                        "rel": "on_failed",
-                        "href": "https://US_commerce_site/payment/return/failed",
-                    }
-                ]
+                {
+                    "rel": "on_cancelled",
+                    "href": "https://usgaminggamblig.com/payment/return/cancelled"
+                },
+                {
+                    "rel": "on_failed",
+                    "href": "https://usgaminggamblig.com/payment/return/failed"
+                },
+                {
+                    "rel": "default",
+                    "href": "https://usgaminggamblig.com/payment/return/success"
+                }
+            ],
+            "transactionType": "PAYMENT",
+            "updatedTime": "2020-03-19T06:38:08Z",
+            "statusTime": "2020-03-19T06:38:08Z",
+            "neteller": {
+                "consumerId": "neteller.account@example.org",
+                "consumerIdLocked": true
             }
-
+            }
 
 ## Get Payment Handle Using Merchant Reference Number [GET /v1/paymenthandles?merchantRefNum={merchantRefNum}]
 <a name="getpaymenthandlemerchantrefnum" title="Look Up a Payment Handle Using a Merchant Reference Number"></a>
@@ -1392,71 +1492,113 @@ Click on **Get Payment Handle Using Merchant Reference Number** above to see how
 + Parameter
 
     + merchantRefNum : `13995817730005389` - This is the *merchantRefNum* used in the original Payment Handle creation request.
+        _Mandatory_
+    + limit : `32` (number) - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` (UTC Date) - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
+        _Optional_
 
 + Request Look Up Payment Handle Using Merchant Reference Number (application/json)
 
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
+
+    + Attributes
+        + Include paymenthandles
 
     + Body
 
             {
-                "meta": {
-                    "numberOfRecords": 1,
-                    "limit": 10,
-                    "page": 1
+            "meta": {
+                "numberOfRecords": 1,
+                "limit": 10,
+                "page": 1
+            },
+            "paymentHandles": [
+                {
+                "id": "037490af-89ee-4794-9022-f7b91a6ddaac",
+                "merchantRefNum": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "status": "INITIATED",
+                "paymentType": "NETELLER",
+                "liveMode": false,
+                "usage": "SINGLE_USE",
+                "action": "REDIRECT",
+                "executionMode": "SYNCHRONOUS",
+                "amount": 100,
+                "currencyCode": "USD",
+                "merchantDescriptor": {
+                    "dynamicDescriptor": "OnlineStore",
+                    "phone": "12345678"
                 },
-              "paymentHandles":[{
-              "id": "26359efd-7cfb-4014-a13d-1724e3ff17fa",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-115",
-              "action": "REDIRECT",
-              "currencyCode": "GBP",
-              "usage": "SINGLE_USE",
-              "status": "EXPIRED",
-              "timeToLiveSeconds": 0,
-              "transactionType": "PAYMENT",
-              "paymentType": "NETELLER",
-              "executionMode": "SYNCHRONOUS",
-              "customerIp": "172.0.0.1",
-              "paymentHandleToken": "SC0YsGIIgFksiOsQ",
-              "billingDetails": {
-                 "street": "George Street",
-                 "street2": "3 Edgar Buildings",
-                 "city": "Bath",
-                 "zip": "BA1 2FJ",
-                 "country": "GB"
-              },
-                "neteller": {
-                "consumerId": "johndoe@email.com",
-                "detail1Description":"description",
-                "detail1Text":"Details 1 text"  
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "zip": "M5H 2N2",
+                    "city": "Toronto",
+                    "country": "CA"
                 },
-              "returnLinks": [{
-                        "rel": "on_completed",
-                        "href": "https://US_commerce_site/payment/return/success",
+                "customerIp": "172.0.0.1",
+                "timeToLiveSeconds": 645,
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
+                    "lang": "en_US",
+                    "status": "pending",
+                    "processor": "NETELLER"
+                },
+                "returnLinks": [
+                    {
+                        "rel": "default",
+                        "href": "https://usgaminggamblig.com/payment/return/success"
+                    },
+                    {
+                        "rel": "on_cancelled",
+                        "href": "https://usgaminggamblig.com/payment/return/cancelled"
                     },
                     {
                         "rel": "on_failed",
-                        "href": "https://US_commerce_site/payment/return/failed",
+                        "href": "https://usgaminggamblig.com/payment/return/failed"
+                    },
+                    {
+                        "rel": "on_completed",
+                        "href": "https://usgaminggamblig.com/payment/return/completed"
                     }
-                ]}
+                ],
+                "transactionType": "PAYMENT",
+                "txnTime": "2020-03-19T06:38:07Z",
+                "updatedTime": "2020-03-19T06:38:08Z",
+                "statusTime": "2020-03-19T06:38:08Z",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "https://api.qa.paysafe.com/alternatepayments/v1/accounts/1011872745/paymenthandles/037490af-89ee-4794-9022-f7b91a6ddaac"
+                    }
+                ],
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                }
+            }
+            ]
             }
 
 # Group Payments
 
 ## Payments [/v1/payments]
 
-Payment requests allow you to process a payment using the [*paymentHandleToken*](#paymenthandlerequest) that you have previously created for the payment instrument you want to use.
-
-## Process Payments
-
 Payment requests allow you to process a payment using the *paymentHandleToken* that you have created. In a single request, the payment is authorized and settled. You need to set the *settleWithAuth* parameter to true. The examples below include a *paymentHandleToken* created for NETELLER.
 
-### Process Payments [POST]
+## Process Payments [POST]
 <a name="paymentrequest" title="Post Payment Using Payment Handle Token"></a>
 
 Click on **Process Payments** above to see how to create a Payment request using a Payment Handle token.
@@ -1469,6 +1611,7 @@ Click on **Process Payments** above to see how to create a Payment request using
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"Process Payments
+            Simulator: "EXTERNAL"
 
     + Body
 
@@ -1488,31 +1631,55 @@ Click on **Process Payments** above to see how to create a Payment request using
     + Body
 
             {
-              "id": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-108",
-              "settleWithAuth": true,
-              "paymentHandleToken": "SCZJg09GWSv36NLB",
-              "txnTime": "2018-12-14T15:12:18Z",
-              "customerIp": "10.10.12.64",
-              "dupCheck": true,
-              "description": "Magazine subscription",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "COMPLETED",
-              "availableToSettle": 0,
-              "gatewayResponse": {
-                  "orderId": "ORD_0d676b4b-0eb8-4d78-af25-e41ab431e325",
-                    "totalAmount": 3599,
-                    "currency": "EUR",
-                    "status": "pending",
+                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "currencyCode": "USD",
+                "settleWithAuth": true,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "COMPLETED",
+                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "amount": 100,
+                "consumerIp": "172.0.0.1",
+                "liveMode": false,
+                "updatedTime": "2020-03-19T06:44:22Z",
+                "statusTime": "2020-03-19T06:44:22Z",
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
                     "lang": "en_US",
+                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                    "verificationLevel": "10",
+                    "transactionId": "127934948749341",
+                    "transactionType": "Member to Merchant Transfer (Order)",
+                    "description": "neteller.account@example.org to Neteller Simulator Test",
+                    "status": "paid",
                     "processor": "NETELLER"
+                },
+                "availableToSettle": 0,
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                },
+                "settlements": {
+                    "amount": 100,
+                    "txnTime": "2020-03-19T06:38:07.000+0000",
+                    "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                    "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                    "status": "COMPLETED"
                 }
             }
 
-
-
+ 
 ## Get Payments [GET /v1/payments/{paymentId}]
 <a name="getpayment" title="Look Up a Payment"></a>
 
@@ -1527,35 +1694,55 @@ Click on **Get Payments** above to see how to look up a Payment using the ID ret
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
 
     + Body
 
             {
-              "id": "3aeb9c63-6386-46a3-9f8e-f452e722228a",
-              "amount": 1900,
-              "merchantRefNum": "merchantRefNum-108",
-              "settleWithAuth": true,
-              "paymentHandleToken": "SCZJg09GWSv36NLB",
-              "txnTime": "2018-12-14T15:12:18Z",
-              "customerIp": "10.10.12.64",
-              "dupCheck": true,
-              "description": "Magazine subscription",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "COMPLETED",
-              "availableToSettle": 1900,
-              "gatewayResponse": {
-                 "orderId": "ORD_0d676b4b-0eb8-4d78-af25-e41ab431e325",
-                    "totalAmount": 3599,
-                    "currency": "EUR",
-                    "status": "pending",
+                "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                "currencyCode": "USD",
+                "settleWithAuth": true,
+                "txnTime": "2020-03-19T06:38:07.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "COMPLETED",
+                "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                "amount": 100,
+                "consumerIp": "172.0.0.1",
+                "liveMode": false,
+                "updatedTime": "2020-03-19T06:44:22Z",
+                "statusTime": "2020-03-19T06:44:22Z",
+                "gatewayResponse": {
+                    "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                    "totalAmount": "100",
+                    "currency": "USD",
                     "lang": "en_US",
+                    "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                    "verificationLevel": "10",
+                    "transactionId": "127934948749341",
+                    "transactionType": "Member to Merchant Transfer (Order)",
+                    "description": "neteller.account@example.org to Neteller Simulator Test",
+                    "status": "paid",
                     "processor": "NETELLER"
+                },
+                "availableToSettle": 0,
+                "neteller": {
+                    "consumerId": "neteller.account@example.org",
+                    "consumerIdLocked": true
+                }
             }
-            }
-            
+
+
 ## Get Payments Using Merchant Reference number [GET /v1/payments?merchantRefNum={merchantRefNum}]
 <a name="getpaymentmerchantrefnum" title="Look Up a Payment Using a Merchant Reference Number"></a>
 
@@ -1564,43 +1751,86 @@ Click on **Get Payments Using Merchant Reference Number** above to see how to lo
 + Parameter
 
    + merchantRefNum : `merchantRefNum-145` - This is the merchant reference number created by the merchant and submitted as part of the Payments request.
+        _Mandatory_
+   + limit : `32` (number) - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` (UTC Date) - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
+        _Optional_
 
 + Request Look Up Payment Using Merchant Reference Number (application/json)
 
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
 
+    + Attributes
+        + Include payments
+        
     + Body
 
             {
-              "meta": {
-                    "numberOfRecords": 1,
-                    "limit": 10,
-                    "page": 1
-                },
-              "payments": [
+            "meta": {
+                "numberOfRecords": 1,
+                "limit": 10,
+                "page": 1
+            },
+            "payments": [
                 {
-                  "id": "8190c675-6d68-4cd7-a29c-55b406addaeb",
-                  "amount": 1900,
-                  "merchantRefNum": "merchantRefNum-145",
-                  "settleWithAuth": true,
-                  "paymentHandleToken": "SChfCGCURe5NiLIv",
-                  "authCode": "107212",
-                      "txnTime": "2018-12-14T15:12:18Z",
-                  "customerIp": "10.10.12.64",
-                  "description": "Magazine subscription",
-                  "currencyCode": "GBP",
-                  "paymentType": "NETELLER",
-                  "status": "COMPLETED",
-                  "avsResponse": "MATCH",
-                
-                  "availableToSettle": 40
-                }
-              ]
+                        "id": "67869d92-4df1-455b-80f4-780abbce41b4",
+                        "gatewayReconciliationId": "b8a8ae3d-1771-4113-aa54-be0721977c0d",
+                        "merchantRefNum": "4a33324e-ae23-4c48-955b-33ee189933f3",
+                        "amount": 100,
+                        "currencyCode": "USD",
+                        "paymentType": "NETELLER",
+                        "paymentHandleToken": "PHi2MeARP5OxuXIm",
+                        "settleWithAuth": true,
+                        "consumerIp": "172.0.0.1",
+                        "billingDetails": {
+                            "street1": "100 Queen",
+                            "street2": "Unit 201",
+                            "zip": "M5H 2N2",
+                            "city": "Toronto",
+                            "country": "CA"
+                        },
+                        "liveMode": false,
+                        "txnTime": "2020-03-19T06:38:07Z",
+                        "updatedTime": "2020-03-19T06:44:22Z",
+                        "statusTime": "2020-03-19T06:44:22Z",
+                        "status": "COMPLETED",
+                        "gatewayResponse": {
+                            "orderId": "ORD_5cc31a72-5ac9-429b-8105-43c8a1c1189e",
+                            "totalAmount": "100",
+                            "currency": "USD",
+                            "lang": "en_US",
+                            "customerId": "CUS_718980F1-7B2F-41CA-A758-644043362B11",
+                            "verificationLevel": "10",
+                            "transactionId": "127934948749341",
+                            "transactionType": "Member to Merchant Transfer (Order)",
+                            "description": "neteller.account@example.org to Neteller Simulator Test",
+                            "status": "paid",
+                            "processor": "NETELLER"
+                        },
+                        "links": [
+                            {
+                                "rel": "self",
+                                "href": "https://api.qa.paysafe.com/alternatepayments/v1/accounts/1011872745/payments/67869d92-4df1-455b-80f4-780abbce41b4"
+                            }
+                        ],
+                        "neteller": {
+                            "consumerId": "neteller.account@example.org",
+                            "consumerIdLocked": true
+                        }
+                    }
+                ]
             }
+
 
 # Group Standalone Credits 
 
@@ -1620,6 +1850,7 @@ Click on **Process Standalone Credits** above to see how to process a Standalone
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
             
     + Body
 
@@ -1631,22 +1862,59 @@ Click on **Process Standalone Credits** above to see how to process a Standalone
               "customerIp": "204.91.0.12",
               "description": "Pay surplus"
             }    
-            
+  
 + Response 200 (application/json)
 
     + Body
 
             {
-              "id": "e075f2ae-dfc4-4f6d-8d89-61158367b6a6",
-              "amount": 40,
-              "merchantRefNum": "merchantRefNum-151",
-              "paymentHandleToken": "SC9mbfZSITB5OwDJ",
-              "customerIp": "204.91.0.12",
-              "currencyCode": "GBP",
-              "paymentType": "NETELLER",
-              "status": "PENDING",
-              "description": "Pay surplus"
+                "id": "ff9bb334-5f7b-4b99-a3bd-abda1d7c529e",
+                "paymentType": "NETELLER",
+                "paymentHandleToken": "PH1c9QG7Zwj4N38E",
+                "merchantRefNum": "29f28809-5281-497f-aa9f-40f58018edb3",
+                "currencyCode": "USD",
+                "txnTime": "2020-03-19T07:15:06.000+0000",
+                "billingDetails": {
+                    "street1": "100 Queen",
+                    "street2": "Unit 201",
+                    "city": "Toronto",
+                    "zip": "M5H 2N2",
+                    "country": "CA"
+                },
+                "status": "PENDING",
+                "gatewayReconciliationId": "29f28809-5281-497f-aa9f-40f58018edb3",
+                "amount": 500,
+                "returnLinks": [
+                    {
+                        "rel": "on_failed",
+                        "href": "https://usgaminggamblig.com/payment/return/failed"
+                    },
+                    {
+                        "rel": "on_cancelled",
+                        "href": "https://usgaminggamblig.com/payment/return/cancel"
+                    },
+                    {
+                        "rel": "default",
+                        "href": "https://usgaminggamblig.com/payment/return/success"
+                    }
+                ],
+                "liveMode": false,
+                "updatedTime": "2020-03-19T07:15:06Z",
+                "statusTime": "2020-03-19T07:15:06Z",
+                "gatewayResponse": {
+                    "id": "664099288591333",
+                    "amount": "500",
+                    "currency": "USD",
+                    "transactionType": "Merchant to Member Transfer",
+                    "description": "Neteller Simulator Test to neteller.account@example.org",
+                    "status": "pending",
+                    "processor": "NETELLER"
+                },
+                "neteller": {
+                    "consumerId": "neteller.account@example.org"
+                }
             }
+
 
 ## Get Standalone Credits [GET /v1/standalonecredits/{standaloneCreditsId}]
 <a name="getstandalonecredits" title="Look Up Standalone Credits"></a>
@@ -1662,6 +1930,7 @@ Click on **Get Standalone Credits** above to see how to look up Standalone Credi
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
 
 + Response 200 (application/json)
 
@@ -1675,7 +1944,6 @@ Click on **Get Standalone Credits** above to see how to look up Standalone Credi
               "paymentHandleToken": "SCZJg09GWSv36NLB",
               "txnTime": "2018-12-14T15:12:18Z",
               "customerIp": "10.10.12.64",
-              "dupCheck": true,
               "description": "Magazine subscription",
               "currencyCode": "GBP",
               "paymentType": "NETELLER",
@@ -1698,16 +1966,31 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 
 + Parameter
 
-   + merchantRefNum : "merchantRefNum-151"
+    + merchantRefNum : `merchantRefNum-101` (string) - This is the merchant reference number created by the merchant and submitted as part of the request.
+        _Mandatory_
+    + limit : `32` (number) - This is the total number of records to return. Default = 10.
+        _Optional_ _Max=50_
+    + offset: `0` (number) - This is the starting position, where 0 is the first record. Default = 0.
+        _Optional_ 
+    + startDate : `2019-01-26` (UTC Date) - This is the start date in UTC. Default = 30 days before the *endDate*.
+        _Optional_
+    + endDate : `2019-03-26` (UTC Date) - This is the end date in UTC. Default = current date and time.
+        _Optional_
+
 
 + Request Look Up Standalone Credits Using Merchant Reference Number (application/json)
 
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
+            Simulator: "EXTERNAL"
+
 
 + Response 200 (application/json)
 
+    + Attributes
+        + Include standalonecredits
+    
     + Body
 
             {
@@ -1728,7 +2011,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
                     "description": "Pay surplus"
                 }]
             }
-            
+
 # Data Structures
 
 ## Addresses
@@ -1793,8 +2076,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         + `fieldErrors` (array) - If applicable, this is a list of fields that have issues.
             + `field`:`street` (string) - This is the field name. 
             + `error`:`Unexpected characters` (string) This is the error associated with the field name.
-        + `link` (array) - If applicable, this is a list of links to the related resource.
-            + `rel` (string) - This is the description or relation of the link. For example, default, self, first, prev, next, last.
+        + `links` (array) - If applicable, this is a list of links to the related resource.
+            + `rel` (string) - This is the description or relation of the link. For example, default, redirect_payment, first, prev, next, last.
             + `href` (string) - This is the actual URL of the link.
 
 ## Gateway Response
@@ -1831,8 +2114,9 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `neteller` (object) 
 
     + Properties
-        + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Required for withdrawal request.
+        + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Mandatory for withdrawal request.
             _length<=150_
+        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.
         + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
@@ -1856,11 +2140,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `paymentType`: (enum) - This is the payment type associated with the Payment Handle used for this request.
     _Read Only_
     + Members
-        + CARD
-        + SIGHTLINE
-        + SKRILL
         + NETELLER
-        + VIPPREFERRED
 + `status`:`PENDING` (enum) - This is the status of the transaction request.
     _Read Only_
     + Members
@@ -1876,6 +2156,14 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `customerIp`:`204.91.0.12` (string) - This is the customer's IP address.
     _length<=39_
 + Include Metadata Object
++ `gatewayReconciliationId`: `QAAAAABHCI` (string) - Transaction identifier that can be used to reconcile this transaction with the provider gateway.
+    _Read Only_
++ Include Gateway Response
++ `updatedTime`: `2016-01-01T04:5:55Z` (string) - Indicates the last updated time for the resource.
+    _Read Only_
++ `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
+    _Read Only_
++ Include neteller
 
 ## PaymentHandleRequest (object)
 
@@ -1886,10 +2174,10 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `transactionType`: (enum, required) - This specifies the transaction type for which the Payment Handle is created.
     + Members
         + PAYMENT - Payment Handle is created to continue the Payment.
-        + STANDALONE_CREDITS - Payment Handle is created to continue the Standalone Credit.
+        + STANDALONE_CREDIT - Payment Handle is created to continue the Standalone Credit.
 + `accountId`:`9876543210` (string) - This is the merchant account number used for the request. Include this optional parameter if you have more than one merchant account for the currency/payment type combination you are specifying.
     _length<=10_
-+ `status`:`PAYABLE` (enum) - This is the status of the transaction request.
++ `status`:`PAYABLE` (enum) - This is the status of the payment handle.
     _Read Only_
     + Members
         + INITIATED - The transaction was initiated with the downstream provider.
@@ -1909,7 +2197,8 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + `action`:`REDIRECT` (enum) - This specifies the next step of the user journey once they proceed to the Payment.
     _Read Only_
     + Members
-        + REDIRECT -The user must be redirected in order to complete a Payment, e.g., when an alternate payment method like Paysafecard is used.
+        + REDIRECT - The user must be redirected in order to complete a Payment.
+        + NONE - No user action is required. For processing Standalone Credits, action will always be NONE.
 + `executionMode`:`SYNCHRONOUS` (enum) - This specifies the action of the merchant server in order to complete the Payment.
     + Members
         + SYNCHRONOUS - The status of the Payment request will be returned synchronously to the merchant, e.g., a credit card request.
@@ -1917,8 +2206,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _Max =999999999_
 + `currencyCode`:`CAD` (string) - This is the [currency of the merchant account](#currencycodes), e.g., USD or CAD. **Note:** This field is mandatory if *transactionType* is included. The *currencyCode* specified in the Payment Handle request must match the *currencyCode* specified in the Payments API request the *paymentHandleToken* is used for. This is a mandatory field.
     _max=3_
-+ `paymentHandleTokenFrom`:`SCyGZDlUuZ9zxjyd` (string) - This is an [existing Customer Payment Handle](#createcustomerpaymenthandlerequest), from which the payment instrument and profile details are retrieved. If this parameter is included you can omit the *billingDetails* object.
-    _length<=36_
 + `paymentHandleToken`:`SCO3wKcIyLoQbQvw` (string) - This is the payment token generated by Paysafe that will be used by merchants for Payment API requests.
     _Read Only, length<=36_
 + Include Profile
@@ -1933,12 +2220,25 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + links (object) - This is an array of links related to the resource.
     + `rel`: `redirect_payment` (enum)
     + `href`:`http://api.paysafe.com/card/redirect/372b5ee7-6360-4403-b444-164f8f1d2709`
-    
 + `customerIp`:`111.111.111.111` (string) - This is the customer's IP address.
     _length<=39_
 + `timeToLiveSeconds`:`899` (number) - This is the period of time, in seconds, the *paymentHandleToken* is valid before expiration. 
     _Read Only, length<=899_
++ `txnTime`: `2015-12-11T16:33:49Z` (string) - This is the date and time the transaction was processed.
+    _Read Only_
++ Include Gateway Response
++ `updatedTime`: `2016-01-01T04:5:55Z` (string) - Indicates the last updated time for the resource.
+    _Read Only_
++`statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
+    _Read Only_
+
+## paymenthandles
 + Include Metadata Object
++ `paymenthandles`: (array) - An array of Payment Handles.
+
+## payments
++ Include Metadata Object
++ `payments`: (array) - An array of Payments.
 
 ## Payment Methods Get
 + paymentMethods (object)
@@ -1950,8 +2250,6 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
         _max=3_
     + `accountId`: `1009355920` (string) - This is the merchant account for which the payment method and currency are enabled.
         _Read Only, length<=10_
-            
-
 
 ## PaymentsRequest (object)
 
@@ -1996,6 +2294,18 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
 + Include Metadata Object
 + `statusReason` - This is reason for the status. This is present in case of ERROR, FAILURE, HELD status.
     _length<=255_
++ `gatewayReconciliationId`: `QAAAAABHCI` (string) - Transaction identifier that can be used to reconcile this transaction with the provider gateway.
+    _Read Only_
++ `updatedTime`: `2016-01-01T04:5:55Z` (string) - Indicates the last updated time for the resource.
+    _Read Only_
++ `statusTime`: `2016-01-01T04:55:55Z` (string) - Indicates when the status was last updated.
+    _Read Only_
++ Include neteller
++ `availableToRefund`:`25` (number) - This is the amount of the Authorization remaining to refund, in minor units.
+    _Read Only, max=999999999_
++ `links` (array) - If applicable, this is a list of links to the related resource.
+            + `rel` (string) - This is the description or relation of the link. For example, default, redirect_payment, first, prev, next, last.
+            + `href` (string) - This is the actual URL of the link.
 
 ## Profile
 
@@ -2031,6 +2341,10 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + `accountNumber` - This is the account number of the recipient.
         _length<=25_
 
+## standalonecredits
+    
++ Include Metadata Object
++ `standalonecredits`: (array) - An array of Standalone Credits.
 
 ## Settlement
 + `id`: `25f6dadf-176a-415f-95c9-6ff39ff697ba` (string) - This is the ID returned in the response. This ID can be used for future associated requests, e,g., Refunds.
