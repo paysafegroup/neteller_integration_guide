@@ -468,7 +468,7 @@ This is an example of a typical webhooks payload received when a Payments call i
         "eventName": "PAYMENT_HANDLE_COMPLETED"
 }
 ```
-> **Note**: Unlike your NETELLER Webhook, you will not receive a Private key here as part of the payload. Rather, you need to consume the payload directly. 
+> **Note**: Unlike your NETELLER Webhook, you will not receive a Secret key here as part of the payload. Rather, you need to consume the payload directly. 
 
 ## Webhook Best Practices 
 + When the status of one of your transaction request changes, Paysafe immediately sends a callback to your webhook's endpoint URL to inform you of the status change. 
