@@ -1184,7 +1184,7 @@ This is a read-only raw response returned by an acquirer.
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |error              |[error](#errorobject)                  |This is a read-only attribute       |
 |statusReason       |string<br/>`length<=255`               |This read-only attribute is a reason for the status. This is present in the case where *status* is ERROR, FAILURE, or HELD. |
-|paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible values are:<ul><li>CARD</li><li>PAYSAFECASH</li><li>PAYSAFECARD</li><li>VIP PREFERRED</li><li>SIGHTLINE</li><li>SKRILL</li><li>INSTANT ACH</li><li>ACH</li><li>EFT</li></ul>|
+|paymentType            |enum                       |This is the payment type associated with this Payment Handle. Possible value is:<ul><li>NETELLER</li></ul>|
 |gatewayReconciliationId |string                 |Transaction identifier that can be used to reconcile this transaction with the provider gateway.<br/><i>Read Only</i>|
 |updatedTime             |datetime               |ISO 8601 format (UTC) </b>This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`<br/><i>Read Only</i>|
 |statusTime              |datetime               |ISO 8601 format (UTC) </b>This is the date and time the resource status was last updated, e.g., `2014-01-26T10:32:28Z`<br/><i>Read Only</i>|
