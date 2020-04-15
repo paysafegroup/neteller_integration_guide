@@ -1034,15 +1034,21 @@ such. For example, 50 JPY would pass 50 in the amount, 50.00 USD would be an amo
 <a name="gatewayresponseobject" title= "Gateway Response Object"></a>
 ## gatewayResponse
 
-This is a read-only raw response returned by an acquirer. 
+This is a read-only raw response returned by the payment service provider. 
 
 | Element            | Type   | Description                                                                                         |
 |--------------------|--------|-----------------------------------------------------------------------------------------------------|
 |orderId             |string  |Unique NETELLER reference for the order. `ie: ORD_7915d463-ccc8-4305-9d33-9e5c9310f12e, SUB_c46645ea-b7b0-4a91-87f7-88c00ec0dea1`|
 |totalAmount         |number  |The total amount due for this order, including all items, fees, taxes.|
 |currency            |string  |The currency of the total amount due.  The order must have the same currency for all items, fees and taxes. <br/>see [Currencies](#currencies) for complete list|
-|status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
 |lang                |string  |The language that the Paysafe Checkout should be displayed in.<br/>See [Possible values](#Localecodes) for a complete list of languages supported.|
+|customerId          |string  |The unique customer identifier.  ie:  CUS_18C9DE8B-F1AC-4BCE-96E2-9C760B62C18A|
+|verificationLevel   |enum    |Possible values are:<ul><li>**00** - Member has not been verified, no verified payment instruments</li><li>**01** - Member has not been verified, has one or more verified payment instruments</li><li>**10** - Member is verified, no verified payment instruments</li><li>**11** - Member is verified, has one or more verified payment instruments</li><li></ul>|
+|transactionId       |string  |The unique transaction id from NETELLER.|
+|transactionType|enum|Possible values are:<ul><li>"Member to Merchant Transfer" literal for payments</li><li>"Merchant to Member Transfer" for standalone credits</li></ul>|
+|description|string|"Appname to email address" or "email address to App name" describing the transfer flow using the account descriptors|
+|status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
+|processor|enum|Possible value is: <ul><li>NETELLER</li></ul>|
 
 <a name="linksobject" title="links Object"></a>
 ## links
@@ -1112,7 +1118,6 @@ This is a read-only raw response returned by an acquirer.
 |---                    |---                        |---       |
 |id                     |string<br/>`length<=32`    |This read-only attribute is the ID returned in the response. It can be used to retrieve the paymentHandle.|
 |accountId              |string<br/>`length<=10`    |This is the merchant account number used for the request. Include this parameter if you have more than one merchant account for the currency/payment type combination you are specifying. |
-<!--|paymentHandleTokenFrom |string<br/>`length<=36`    |This is an existing paymentHandle ID created for a customer, from which the payment instrument and profile details are retrieved. |-->
 |merchantRefNum         |string<br/>`length<=50`   |This is the merchant reference number created by you and submitted as part of the request. It must be unique for each request. |
 |transactionType        |enum                       |This specifies the transaction type for which the Payment Handle is created. Possible values are: <ul><li>PAYMENT</li><li> STANDALONE_CREDIT</li></ul>|
 |status                 |enum                       |This read-only attribute is the status of the request. Possible values are:<ul><li>INITIATED &ndash; The request was initiated with the downstream provider.</li><li>PAYABLE &ndash; You can use the Payment Handle for a Payment request.</li><li>PROCESSING &ndash; The Payment Handle was authorized by customer, awaiting PSP response.</li><li>FAILED &ndash; The transaction failed due to either an error or being declined.</li><li>EXPIRED &ndash; The Payment Handle expired because you did not proceed with the Payment transaction.</li><li>COMPLETED &ndash; The Payment request was initiated successfully using the Payment Handle.</li></ul>      |
@@ -1131,7 +1136,7 @@ This is a read-only raw response returned by an acquirer.
 |timeToLiveSeconds      |number<br/>`length<=899`   |This read-only attribute is the period of time, in seconds, the *paymentHandleToken* is valid before expiration.|
 |returnLinks            |[returnLinks](#returnlinksobject)|These are links to which to redirect the customer, where applicable. |
 |txnTime                |UTC formatted date               |This is the date and time the request was processed. For example:<br/>2019-01-26T10:32:28Z|
-|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This is the read-only raw response returned by an acquirer. It is returned only if your account is configured accordingly.|
+|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This is the read-only raw response returned by the payment service provider. It is returned only if your account is configured accordingly.|
 |updatedTime|datetime|ISO 8601 format (UTC) This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`|
 |statusTime|datetime|ISO 8601 format (UTC) This is the date and time the resource was last updated, e.g., `2014-01-26T10:32:28Z`|
 
@@ -1180,7 +1185,7 @@ This is a read-only raw response returned by an acquirer.
 |txnTime            |UTC formatted date                     |This read-only attribute is the date and time the request was processed. For example:<br/>2019-01-26T10:32:28Z|
 |status             |enum                                   |This read-only attribute is the status of the transaction request. Possible values are:<ul><li>RECEIVED &ndash; Our system has received the request and is waiting for the downstream processor’s response.</li><li>COMPLETED &ndash; The transaction has been completed.</li><li>HELD &ndash; The transaction has been placed on hold due to risk considerations.</li><li>FAILED &ndash; The transaction failed, due to either an error or being declined.</li><li>CANCELLED &ndash; The request has been fully voided (reversed).</li><li>PENDING &ndash; The request is pending.</li></ul>|
 |currencyCode       |string<br/>`length=3`                  |This is the currency of your account, for example, USD or CAD, returned in the request response. See [Currency Codes](#currencycodes). <br/>**Note:** The *currencyCode* specified in the Payment request must match the *currencyCode* specified in the Payment Handle request from which the *paymentHandleToken* is taken. This is a mandatory field.|
-|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This read-only attribute is the read-only raw response returned by an acquirer. It is returned only if your account is configured accordingly.|
+|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This read-only attribute is the read-only raw response returned by the payment service provider. It is returned only if your account is configured accordingly.|
 |neteller           |[neteller](#netellerobject)            |These are details of the payment instrument used in the request.|
 |error              |[error](#errorobject)                  |This is a read-only attribute       |
 |statusReason       |string<br/>`length<=255`               |This read-only attribute is a reason for the status. This is present in the case where *status* is ERROR, FAILURE, or HELD. |
@@ -1215,7 +1220,7 @@ This is a read-only raw response returned by an acquirer.
 |lastName           |string <br/>`length<=80`           |This is the customer’s last name.|
 |email              |string<br/>`length<=255`           |This is the customer's email address.|
 |phone              |string<br/>`length<=40`            |This is the customer's phone number.|
-|dateOfBirth        |[dateOfBirth](#dateofbirthobject)  |These are the addresses associated with saved payment instruments for the customer. |
+|dateOfBirth        |[dateOfBirth](#dateofbirthobject)  |This is the customer's date of birth. |
 
 ```apib
             {
@@ -1239,7 +1244,7 @@ This is a read-only raw response returned by an acquirer.
 |txnTime            |UTC formatted date                     |This is the date and time the request is processed. For example:<br/>2014-01-26T10:32:28Z|
 |status             |enum                                   |This is the status of the transaction request. Possible values are:<ul><li>RECEIVED &ndash; Our system received the request and is waiting for the downstream processor’s response.</li><li>PENDING &ndash; Our system received the request but is not yet batched.</li><li>PROCESSING &ndash; The Settlement batch has begun.</li><li>COMPLETED &ndash; The transaction is completed.</li><li>FAILED &ndash; The transaction failed due to an error or a declined transaction.</li><li>CANCELLED &ndash; The transaction request is cancelled.</li></ul>|
 |error              |[error](#errorobject)                  |       |
-|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This is the read-only raw response returned by an acquirer. It is returned only if your account is configured accordingly.|
+|gatewayResponse    |[gatewayResponse](#gatewayresponseobject) | This is the read-only raw response returned by the payment service provider. It is returned only if your account is configured accordingly.|
 
 
 ```apib
@@ -2081,7 +2086,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
             + `href` (string) - This is the actual URL of the link.
 
 ## Gateway Response
-+ `gatewayResponse` (object) - This is the raw response returned by an acquirer. It is returned only if your account is configured accordingly.
++ `gatewayResponse` (object) - This is the raw response returned by the payment service provider. It is returned only if your account is configured accordingly.
     _Read Only_
 
     + Properties
