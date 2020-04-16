@@ -1045,10 +1045,10 @@ This is a read-only raw response returned by the payment service provider.
 |customerId          |string  |The unique customer identifier.  ie:  CUS_18C9DE8B-F1AC-4BCE-96E2-9C760B62C18A|
 |verificationLevel   |enum    |Possible values are:<ul><li>**00** - Member has not been verified, no verified payment instruments</li><li>**01** - Member has not been verified, has one or more verified payment instruments</li><li>**10** - Member is verified, no verified payment instruments</li><li>**11** - Member is verified, has one or more verified payment instruments</li><li></ul>|
 |transactionId       |string  |The unique transaction id from NETELLER.|
-|transactionType|enum|Possible values are:<ul><li>"Member to Merchant Transfer" literal for payments</li><li>"Merchant to Member Transfer" for standalone credits</li></ul>|
-|description|string|"Appname to email address" or "email address to App name" describing the transfer flow using the account descriptors|
+|transactionType     |enum    |Possible values are:<ul><li>"Member to Merchant Transfer" literal for payments</li><li>"Merchant to Member Transfer" for standalone credits</li></ul>|
+|description         |string  |"Appname to email address" or "email address to App name" describing the transfer flow using the account descriptors|
 |status              |string  |**pending**<br/>**cancelled**<br/>**failed** - The order was not paid.<br/>**paid**<br/>**expired** - The order had expired \(default: 15 mins\)|
-|processor|enum|Possible value is: <ul><li>NETELLER</li></ul>|
+|processor           |enum    |Possible value is: <ul><li>NETELLER</li></ul>|
 
 <a name="linksobject" title="links Object"></a>
 ## links
@@ -2090,12 +2090,26 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     _Read Only_
 
     + Properties
-         + `orderId` (string) - Unique NETELLER reference for the order. ie: ORD_7915d463-ccc8-4305-9d33-9e5c9310f12e, SUB_c46645ea-b7b0-4a91-87f7-88c00ec0dea1
-            _Read Only_
-        + `merchantRefId` (string, required) - The associated merchant reference id from the initial request.
-        + `totalAmount` (number, required) - The total amount due for this order, including all items, fees, taxes.
-        + `currency` (string, required) - The currency of the total amount due.  The order must have the same currency for all items, fees and taxes. see Currencies for complete list
-        + `status` (enum) - The status of the order.
+       + `orderId` (string) - Unique NETELLER reference for the order. ie: ORD_7915d463-ccc8-4305-9d33-9e5c9310f12e, SUB_c46645ea-b7b0-4a91-87f7-88c00ec0dea1
+           _Read Only_
+       + `merchantRefId` (string, required) - The associated merchant reference id from the initial request.
+       + `totalAmount` (number, required) - The total amount due for this order, including all items, fees, taxes.
+       + `currency` (string, required) - The currency of the total amount due.  The order must have the same currency for all items, fees and taxes. see Currencies for complete list
+       +  `lang` (string) - The language that the checkout was rendered in.
+       + `customerId` (string) - The unique customer identifier.  ie:  CUS_18C9DE8B-F1AC-4BCE-96E2-9C760B62C18A
+       + `verificationLevel` (enum) - the verification level of the member and payment instrument.
+            + Members
+                + `00` - Member has not been verified, no verified payment instruments
+                + `01` - Member has not been verified, has one or more verified payment instruments
+                + `10` - Member is verified, no verified payment instruments
+                + `11` - Member is verified, has one or more verified payment instruments
+       + `transactionId` (string) -  The unique transaction id from NETELLER.  
+       + `transactionType` (enum) - The type of transaction.
+            + Members
+                + `Member to Merchant Transfer` - literal for payments 
+                + `Merchant to Member Transfer`- for standalone credits
+       + `description` (string) - "Appname to email address" or "email address to App name" describing the transfer flow using the account descriptors.
+       + `status` (enum) - The status of the order.
                 _Read Only_
             + Members
                 + `pending`
@@ -2104,7 +2118,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
                 + `paid`
                 + `expired` - The order had expired (default: 15 mins)
                 + `lang` (string) - The language that the Paysafe Checkout should be displayed in. See [Possible values](#Localecodes) for a complete list of languages supported.
-       
+       + `proessor`(string) - NETELLER.
 
 ## Metadata Object
 + `meta` (object) 
