@@ -73,6 +73,7 @@ The API endpoint (URI or URL) points to either the Test or Production (live) env
 
 ### Making API Calls
 Before you make your first API call, you must have the following information:
+
 * **API endpoint**: This is the URL to which you send your request, and its format depends on the type of API call.
 * **API key**: Paysafe provides you with the credentials in the [NETELLER Merchant Dashboard](https://merchant.neteller.com). You must include the API key in the Authorization HTTPS header.
 * **Message body**: This must contain valid Paysafe JSON objects as required for the type of request. Not all API calls require a message-body; for example, GET requests do not require a body.
@@ -82,6 +83,8 @@ Before you make your first API call, you must have the following information:
 The behavior is controlled by using an HTTP header named “**Simulator**” in your request, which has the following possible values:
    * **"INTERNAL" (default)** – which redirects you to the simulator page. 
    * **"EXTERNAL"** – which redirects you to the NETELLER payment gateway. 
+
+> **Note:** Ensure all your API requests are UTF-8 encoded.
 
 <a name="paymentscheckout" title="Payments Checkout"></a>
 ## The Paysafe Checkout
