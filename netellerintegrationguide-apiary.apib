@@ -327,7 +327,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=150|The email address of the customer who is making or receiving the payment. |
-|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.|
+|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true. **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure.|
 |detail1Description     |string|no|`length<=15`|Displays additional details of the product.|
 |detail1Text            |string|no|`length<=150` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -2141,7 +2141,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Mandatory for withdrawal request.
             _length<=150_
-        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.
+        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true. **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure.
         + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
