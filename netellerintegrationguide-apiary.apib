@@ -8,6 +8,7 @@ HOST: https://api.test.paysafe.com/paymenthub/
 |---            |---                   |---|
 |v1             |November 2019         |Document Release|
 |v1             |March 2020            |Webhooks Enhancements - Payload, Best Practices|
+|v1             |June 2020             |Introduced a new error code to notify the merchant when the email provided in the request cannot be found in the Neteller system and if the email id is configured to be non-editable.|
 
 This guide provides you step-by-step instructions to integrate NETELLER via the new Paysafe Payments API. It also describes changes to the commonly used [NETELLER REST API](https://paysafegroup.github.io/neteller_rest_api_v1/). 
 # Integrating to the Paysafe Payments API 
@@ -326,7 +327,7 @@ paysafe.checkout.setup(apiKey, options, resultCallback, closeCallback?)
 |Parameter|Type|Required|Validations|Description|
 |---------|-------|---------------|-----------|------------------|
 |consumerId             |string|yes|`length<=150|The email address of the customer who is making or receiving the payment. |
-|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
+|consumerIdLocked       |boolean|no||If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true. **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure.|
 |detail1Description     |string|no|`length<=15`|Displays additional details of the product.|
 |detail1Text            |string|no|`length<=150` |Additional text is displayed next to the detailed description (detail1Description) and presented in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -544,14 +545,16 @@ This is an example of a typical webhooks payload received when a Payments call i
 |402           |ALTERNATE-PAYMENTS-GATEWAY-12 |Payment already settled                 |The payment is already partially/fully settled.|
 |402           |ALTERNATE-PAYMENTS-GATEWAY-13 |Transaction not refundable yet          |The transaction is not refundable yet.|
 |402           |ALTERNATE-PAYMENTS-GATEWAY-14 |Partial settlements not possible        |Partial Settlements are not possible with the selected payment method.|
-|402           |ALTERNATE-PAYMENTS-GATEWAY-16 |Over limit.|The requested amount exceeds the allowed maximum for the specified payment type.|
-|504           |ALTERNATE-PAYMENTS-GATEWAY-17 |Activity timed out. |Your request timed out before it could be completed.|
-|402           |ALTERNATE-PAYMENTS-GATEWAY-19 |Insufficient funds. |The payment instrument does not have sufficient funds.|
+|402           |ALTERNATE-PAYMENTS-GATEWAY-16 |Over limit.                             |The requested amount exceeds the allowed maximum for the specified payment type.|
+|504           |ALTERNATE-PAYMENTS-GATEWAY-17 |Activity timed out.                     |Your request timed out before it could be completed.|
+|402           |ALTERNATE-PAYMENTS-GATEWAY-19 |Insufficient funds.                     |The payment instrument does not have sufficient funds.|
 |402           |ALTERNATE-PAYMENTS-GATEWAY-20 |The third-party account has not been activated. |The third-party account has not been activated.|
-|402           |ALTERNATE-PAYMENTS-GATEWAY-21 |Under limit. |The requested amount is under the allowed minimum amount for the specified payment type.|
-|402           |ALTERNATE-PAYMENTS-GATEWAY-22 |Identity check Failure. |The provided identity details do not match the identity details already present.|
+|402           |ALTERNATE-PAYMENTS-GATEWAY-21 |Under limit.                            |The requested amount is under the allowed minimum amount for the specified payment type.|
+|402           |ALTERNATE-PAYMENTS-GATEWAY-22 |Identity check Failure.                 |The provided identity details do not match the identity details already present.|
 |402           |ALTERNATE-PAYMENTS-GATEWAY-23 |The KYC documents provided could not be verified. |The KYC documents provided could not be verified.|
 |402           |ALTERNATE-PAYMENTS-GATEWAY-24 |There is an already existing third-party account with the details provided. |There is an already existing third-party account with the details provided.|
+|402           |ALTERNATE-PAYMENTS-GATEWAY-25 |Third Party Account does not exist       |The specified third party account could not be found.|
+
 <a name="globalinvalidcharacters" title="Global Invalid Characters"></a>
 # Global Invalid Characters
 
@@ -1099,7 +1102,7 @@ This is a read-only raw response returned by the payment service provider.
 |Element                |Type                       |Description                        |
 |---                    |---                        |---       |
 |consumerId             |string<br/>`length<=150`    |The email address of the customer who is making or receiving the payment. This is provided by you while making a Standalone Credits request. |
-|consumerIdLocked       |boolean                    |If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true|
+|consumerIdLocked       |boolean                    |If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure. **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure.|
 |detail1Description     |string<br/>`length<=15`   |You can show additional details about the product. |
 |detail1Text            |string<br/>`length<=150`    |Additional descriptive text is displayed next to the detail1Description. Shown in the 'More Information' section in the header of the payment form with the other payment details.|
 
@@ -2138,7 +2141,7 @@ Click on **Get Standalone Credits Using Merchant Reference Number** above to see
     + Properties
         + `consumerId`:`john.doe@email.com` (string, required) - This is the email address of the customer who is receiving the payment. Mandatory for withdrawal request.
             _length<=150_
-        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true.
+        + `consumerIdLocked`: `true` (boolean, optional) - If True, the customer cannot edit the consumerId details provided by the merchant.  If False, the customer can edit the consumerId details provided by the merchant. Default: true. **Note:** When the consumerIdLocked is true and if the consumerId is not present in the Neteller system, it will result in transaction failure.
         + `detail1Description`: `description` (string, optional) - You can show additional details about the product in the More information section in the header of the hosted Checkout.
            _length<=15_
         + `detail1Text`:`Details 1 text` (string, optional) - The detail1Text is shown next to the detail1Description in the More Information section in the header of the payment form with the other payment details. The detail1Description combined with the detail1Text is shown in the more information field of your account history CSV file.
